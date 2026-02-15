@@ -1,0 +1,258 @@
+// === Color Palette (Catppuccin Mocha Dark) ===
+$base: #1e1e2e;
+$mantle: #11111b;
+$crust: #0b0b11;
+$text: #cdd6f4;
+$subtext0: #a6adc8;
+$surface0: #313244;
+$surface1: #45475a;
+$surface2: #585b70;
+$overlay0: #6c7086;
+$overlay1: #7f849c;
+$blue: #89b4fa;
+$lavender: #b4befe;
+$sapphire: #74c7ec;
+$sky: #89dceb;
+$teal: #94e2d5;
+$green: #a6e3a1;
+$yellow: #f9e2af;
+$peach: #fab387;
+$maroon: #eba0ac;
+$red: #f38ba8;
+$mauve: #cba6f7;
+$pink: #f5c2e7;
+$flamingo: #f2cdcd;
+$rosewater: #f5e0dc;
+
+// === Global ===
+* {
+  font-family: "JetBrainsMono Nerd Font", "Inter", sans-serif;
+  font-size: 13px;
+}
+
+// ═══════════════════════════════════════════════
+// TOP BAR
+// ═══════════════════════════════════════════════
+window.TopBar {
+  background: transparent;
+
+  .bar-content {
+    background-color: $crust;
+    min-height: 30px;
+    padding: 0px 16px;
+    border-bottom: 2px solid rgba($text, 0.3);
+  }
+
+  // --- Workspaces (círculos) ---
+  .workspaces {
+    .ws-dot {
+      all: unset;
+      border-radius: 50%;
+      background: rgba($overlay0, 0.4);
+      border: 0.25px solid $text;
+      transition: all 0.2s ease;
+
+      .dot {
+        border-radius: 50%;
+      }
+
+      &.active {
+        background: $text;
+        box-shadow: 0 0 6px rgba($text, 0.6);
+      }
+
+      &:hover {
+        background: rgba($text, 0.4);
+      }
+    }
+  }
+
+  // --- Clock ---
+  .clock {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-weight: 600;
+    font-size: 13px;
+    color: $text;
+    letter-spacing: 0.5px;
+  }
+
+  // --- All buttons in TopBar (icons) ---
+  button,
+  menubutton>button {
+    all: unset;
+    color: rgba($text, 0.7);
+    padding: 0 5px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $text;
+      background: rgba($surface1, 0.3);
+    }
+
+    image {
+      color: inherit;
+    }
+  }
+
+  // Systray icons slightly smaller
+  .bar-right {
+    image {
+      font-size: 14px;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SIDE BAR (right edge)
+// ═══════════════════════════════════════════════
+window.SideBar {
+  background: transparent;
+
+  .sidebar-container {
+    background-color: $crust;
+    border-left: 1px solid rgba($surface0, 0.4);
+    padding: 12px 0px;
+    min-width: 38px;
+    border-right: 2px solid rgba($text, 0.3);
+  }
+
+  // --- App Shortcuts ---
+  .shortcut-btn {
+    all: unset;
+    color: rgba(white, 0.6);
+    padding: 8px 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    image {
+      font-size: 18px;
+    }
+
+    &:hover {
+      color: white;
+      text-shadow: 0 0 10px rgba($mauve, 0.6);
+    }
+  }
+
+  // --- Media Visualizer ---
+  .media-visualizer {
+    padding: 6px 0;
+
+    .vis-bars {
+      min-height: 30px;
+
+      .vis-bar {
+        background: rgba(white, 0.6);
+        border-radius: 1px;
+        min-width: 3px;
+        transition: min-height 0.4s ease;
+      }
+    }
+  }
+
+  // --- Media Controls ---
+  .media-controls {
+    .media-title {
+      font-family: "JetBrainsMono Nerd Font", monospace;
+      font-size: 9px;
+      color: rgba(white, 0.8);
+    }
+
+    button {
+      all: unset;
+      color: rgba(white, 0.6);
+      padding: 2px;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: white;
+      }
+
+      image {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .system-zone {
+    border-top: 1px solid rgba($surface1, 0.3);
+    padding-top: 10px;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// GLOBAL POPOVERS
+// ═══════════════════════════════════════════════
+popover {
+  background-color: $base;
+  border: 1px solid $surface1;
+  border-radius: 12px;
+  padding: 10px;
+  color: $text;
+
+  .popover-title {
+    font-weight: 700;
+    font-size: 12px;
+    color: $text;
+  }
+
+  .divider {
+    min-height: 1px;
+    background: rgba($surface1, 0.5);
+    margin: 4px 0;
+  }
+
+  button {
+    all: unset;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: $text;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba($surface1, 0.4);
+    }
+  }
+
+  // Clipboard
+  .clipboard-popover {
+    min-width: 250px;
+
+    .clip-item-label {
+      font-size: 11px;
+      color: $subtext0;
+    }
+  }
+
+  // System Monitor
+  .sysmon-popover {
+    min-width: 220px;
+
+    .sysmon-label {
+      font-family: "JetBrainsMono Nerd Font", monospace;
+      font-size: 12px;
+      color: $sapphire;
+    }
+  }
+
+  // Microphone
+  .mic-popover {
+    min-width: 200px;
+  }
+
+  // Bluetooth
+  .bt-popover {
+    min-width: 200px;
+
+    .bt-connected {
+      color: $green;
+      font-size: 10px;
+    }
+  }
+
+  // Network / Volume (existing)
+  box.network-popover,
+  box.volume-popover {
+    min-width: 150px;
+  }
+}

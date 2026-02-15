@@ -1,0 +1,249 @@
+---
+
+# 🚨 ERRORES MÁS COMUNES EN AGS v2 (ags/gtk4)
+
+---
+
+## 1️⃣ Usar `class` o `className`
+
+❌ Incorrecto:
+
+```tsx
+class="sidebar"
+className="sidebar"
+```
+
+✅ Correcto:
+
+```tsx
+cssClasses={["sidebar"]}
+```
+
+🔎 Regla:
+
+> En GTK4 siempre es `cssClasses` y SIEMPRE es un array.
+
+---
+
+## 2️⃣ Mezclar runtimes (`ags` vs `ags/gtk4`)
+
+Hay DOS sistemas distintos:
+
+### 🔹 Runtime viejo (`ags`)
+
+* createState
+* With
+* For
+* Variable
+* setup
+* subscribe
+
+### 🔹 Runtime moderno (`ags/gtk4`)
+
+* Gtk real
+* bind()
+* connect()
+* sin signals mágicos
+
+❌ No mezcles ambos.
+
+Si importas:
+
+```ts
+import { Astal, Gtk } from "ags/gtk4"
+```
+
+Entonces NO puedes usar:
+
+* createState
+* With
+* For
+* Variable
+* setup
+
+---
+
+## 3️⃣ Usar funciones JSX `{() => ...}` en ags/gtk4
+
+❌ Esto en tu entorno se renderiza como texto:
+
+```tsx
+{() => apps.list.map(...)}
+```
+
+Porque `ags/gtk4` no es SolidJS.
+
+✅ En `ags/gtk4` debes:
+
+* construir widgets manualmente
+* usar `bind`
+* o reconstruir la UI
+
+---
+
+## 4️⃣ Usar APIs viejas de AstalApps
+
+❌ No existe:
+
+```ts
+apps.favorites
+```
+
+✅ Correcto:
+
+```ts
+apps.list.filter(app => app.is_favorite)
+```
+
+---
+
+## 5️⃣ Usar `remove_all()` en GTK4
+
+❌ No existe en GTK4:
+
+```ts
+box.remove_all()
+```
+
+✅ Correcto:
+
+```ts
+while (box.get_first_child()) {
+    box.remove(box.get_first_child())
+}
+```
+
+GTK4 eliminó varios helpers de GTK3.
+
+---
+
+## 6️⃣ Usar `setup` en ags/gtk4
+
+❌ No existe:
+
+```tsx
+<entry setup={(self) => ...} />
+```
+
+Eso era del runtime viejo.
+
+En `ags/gtk4` usas:
+
+```ts
+const entry = new Gtk.Entry()
+entry.connect(...)
+```
+
+---
+
+## 7️⃣ Usar `Variable`, `With`, `For`
+
+En tu versión actual:
+
+❌ No existen
+❌ No se exportan
+❌ Rompen el build
+
+Si ves este error:
+
+```
+No matching export for Variable
+```
+
+Es porque estás usando ejemplos viejos.
+
+---
+
+## 8️⃣ Pensar que JSX = React
+
+Esto NO es React.
+Esto es GTK4 con azúcar sintáctica.
+
+No hay:
+
+* Virtual DOM
+* Render automático
+* Hooks mágicos
+* Reactividad implícita
+
+Es GTK real.
+
+---
+
+## 9️⃣ Intentar usar `.get()` o `.subscribe()`
+
+Eso pertenece a versiones intermedias de AGS v2.
+
+Tu versión usa directamente GTK puro.
+
+---
+
+## 🔟 No entender que GTK4 cambió muchas cosas
+
+GTK4 eliminó:
+
+* add_events
+* scroll signals directos
+* remove_all
+* varias señales antiguas
+
+Ahora se usa:
+
+* EventController
+* connect()
+* controllers
+
+---
+
+# 🎯 REGLA DE ORO PARA TU ENTORNO
+
+Si usas:
+
+```ts
+import { Astal, Gtk } from "ags/gtk4"
+```
+
+Entonces piensa:
+
+> Estoy escribiendo GTK4 puro, no AGS reactivo viejo.
+
+---
+
+# 🧠 Resumen Mental Correcto
+
+Tu stack real es:
+
+```
+AGS v2
++
+GTK4
++
+Astal
++
+JSX como azúcar sintáctica
+```
+
+No es React.
+No es Solid.
+No es Vue.
+
+Es GTK.
+
+---
+
+# 🚀 Consejo final (muy importante)
+
+Antes de copiar ejemplos de internet, verifica:
+
+¿Ese ejemplo usa `ags` o `ags/gtk4`?
+
+Si usa:
+
+```ts
+import { createState } from "ags"
+```
+
+NO es compatible contigo.
+
+---
+no uses centerbox

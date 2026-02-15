@@ -1,0 +1,65 @@
+* Barra superior (top bar)
+
+Posición y tamaño
+
+Está fijada en la parte superior de la pantalla, extendiéndose de lado a lado.
+
+Altura: parece ser bastante delgada, tal vez unos 28–32 px.
+
+Fondo: un color sólido oscuro negro.
+
+Contenido
+
+A la izquierda: un conjunto de círculos (probablemente indicadores de escritorios virtuales o espacios de trabajo)
+
+Centro: fecha y hora actual (en formato digital, tipografía monoespaciada estilizada).
+
+A la derecha: íconos de estado como:
+ - icono de copiar (muestra un panel historial elementos copiados recientemente), 
+ - icono de rendimiento (muestra un panel detallado con los datos de consumo de la CPU, la RAM, etc),
+ - icono de volumen (muestra un panel con los controles de volumen dispositivos de salida de audio),
+ - icono de micro (muestra un panel con los controles de volumen de dispositivos de entrada de audio),
+ - icono de Bluetooth (muestra un panel con opciones para encender o apagar el Bluetooth y una lista de dispositivos cercanos)(el icono cambia si el Bluetooth esta encendido o apagado),
+ - icono de Wi-Fi (muestra un panel con opciones para encender o apagar el Wi-Fi y una lista de redes disponibles)(el icono cambia si la coneccion es por wifi / ethernet o si no hay coneccion),
+ - icono de bateria (el icono muestra si la bateria esta cargando o no, y el porcentaje de la bateria)
+
+Todos los íconos son minimalistas, en blanco o gris claro, sin relleno, con un estilo lineal.
+
+Tipografía y estilo
+
+Fuente futurista o monoespaciada para fecha/hora.
+
+Color del texto e íconos: blanco/gris claro para contraste con fondo oscuro.
+
+Espaciado: los íconos están alineados de manera uniforme y con espacio suficiente para no saturar.
+
+* Barra lateral izquierda (left bar / vertical bar)
+
+Posición y tamaño
+
+Barra vertical pegada al borde derecho de la pantalla.
+
+Anchura: bastante delgada, parece de unos 36–42 px.
+
+Altura: ocupa toda la pantalla.
+
+Fondo: sólido oscuro, sin transparencia evidente, para que los íconos resalten.
+
+Contenido
+
+En la parte superior: Íconos distribuidos verticalmente: 
+ - Icono de terminal (abre una nueva terminal)
+ - Icono de firefox (abre el navegador y si esta abierto, se vuelve a la pestaña principal)
+ - Icono de código (abre antigravity)
+ - Icono de steam (abre steam y si esta abierto, se vuelve a la pestaña principal)
+
+En la parte central: reproductor visual de la cancion que se esta reproduciendo (linea blanca con movimiento seg'un la canci'on reproducida)
+En la parte inferior: reproductor minimalista, con título de la canción y controles básicos (play/pausa/siguiente).
+
+Todos los íconos son lineales y blancos, con un pequeño efecto de hover al pasar el mouse (probablemente cambio de color o iluminación).
+
+Tipografía y estilo
+
+La información textual (como el título de la canción) está en blanco, con tipografía monoespaciada o sans-serif ligera.
+
+El estilo general es minimalista, limpio y enfocado en funcionalidad visual clara, sin bordes pesados ni sombras marcadas.
