@@ -52,8 +52,10 @@ En la parte superior: Íconos distribuidos verticalmente:
  - Icono de firefox (abre el navegador y si esta abierto, se vuelve a la pestaña principal)
  - Icono de código (abre antigravity)
  - Icono de steam (abre steam y si esta abierto, se vuelve a la pestaña principal)
+ - **Apps Dinámicas**: Se agregan autom'aticamente íconos de otras aplicaciones que est'en abiertas en el **workspace actual** y no est'en en la lista por defecto.
+ - **Indicador de Actividad**: La aplicaci'on actualmente en foco se resalta (borde izquierdo azul y fondo sutil) para indicar cu'al est'a activa en el workspace.
 
-En la parte central: reproductor visual de la cancion que se esta reproduciendo (linea blanca con movimiento seg'un la canci'on reproducida)
+En la parte central: visualizador minimalista de m'usica — una sola l'inea horizontal compuesta por peque~nos segmentos (estilo ruido de radio/est'atica) que se mueven aleatoriamente seg'un el estado de reproducci'on. Cuando la canci'on est'a en pausa o no hay reproductor, la l'inea se aplana.
 En la parte inferior: reproductor minimalista, con título de la canción y controles básicos (play/pausa/siguiente).
 
 Todos los íconos son lineales y blancos, con un pequeño efecto de hover al pasar el mouse (probablemente cambio de color o iluminación).
@@ -63,3 +65,37 @@ Tipografía y estilo
 La información textual (como el título de la canción) está en blanco, con tipografía monoespaciada o sans-serif ligera.
 
 El estilo general es minimalista, limpio y enfocado en funcionalidad visual clara, sin bordes pesados ni sombras marcadas.
+
+* Estructura del Proyecto
+
+.
+├── app.ts                 # Punto de entrada principal de la configuración de AGS
+├── style.scss             # Estilos globales en SCSS (colores, fuentes, widgets)
+├── widget/                # Carpeta de componentes (widgets)
+│   ├── SideBar.tsx        # Contenedor principal de la barra lateral izquierda
+│   ├── TopBar.tsx         # Contenedor principal de la barra superior
+│   ├── SideBar/           # Componentes específicos de la barra lateral
+│   │   ├── AppList.tsx    # Lógica de lista de apps (fijas + dinámicas por workspace)
+│   │   ├── MediaControls.tsx      # Controles multimedia
+│   │   ├── MediaVisualizer.tsx    # Visualizador multimedia
+│   │   ├── AppMenu.tsx    # Menú de aplicaciones (no usado actualmente en sidebar)
+│   │   ├── AppsDock.tsx   # Dock de apps (alternativa/legacy)
+│   │   ├── Notifications.tsx # Centro de notificaciones
+│   │   └── PowerProfile.tsx  # Perfiles de energía
+│   ├── TopBar/            # Componentes específicos de la barra superior
+│   │   ├── Workspaces.tsx # Indicadores de escritorios virtuales
+│   │   ├── Clock.tsx      # Reloj y fecha
+│   │   ├── ActiveWindow.tsx  # Título de ventana activa
+│   │   ├── Battery.tsx    # Indicador de batería
+│   │   ├── Network.tsx    # Indicador de red/wifi
+│   │   ├── Bluetooth.tsx  # Indicador de bluetooth
+│   │   ├── Volume.tsx     # Control de volumen
+│   │   ├── Microphone.tsx # Control de micrófono
+│   │   ├── SystemMonitor.tsx # Monitor de recursos (CPU/RAM)
+│   │   ├── Clipboard.tsx  # Historial del portapapeles
+│   │   ├── PowerMenu.tsx  # Menú de apagado/reinicio
+│   │   └── SysTray.tsx    # Bandeja de sistema
+│   ├── reglasags.txt      # Reglas y guías de desarrollo para AGS/GTK4
+│   └── barsstiles.txt     # Documentación de diseño y estructura
+├── package.json           # Dependencias del proyecto
+└── tsconfig.json          # Configuración de TypeScript

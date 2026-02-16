@@ -2,21 +2,18 @@ import app from "ags/gtk4/app"
 import { Astal, Gtk, Gdk } from "ags/gtk4"
 import { execAsync } from "ags/process"
 
-import { MediaVisualizer, MediaControls } from "./SideBar/Media"
+import { MediaControls } from "./SideBar/MediaControls"
+import { MediaVisualizer } from "./SideBar/MediaVisualizer"
+import AppList from "./SideBar/AppList"
 
-function Shortcut({ icon, command, tooltip }: { icon: string, command: string | (() => void), tooltip: string }) {
-    return (
-        <button
-            cssClasses={["shortcut-btn"]}
-            tooltipText={tooltip}
-            onClicked={() => {
-                if (typeof command === "function") command()
-                else execAsync(command)
-            }}
-        >
-            <image iconName={icon} />
-        </button>
-    )
+const { Gio } = imports.gi;
+
+function launchDetached(command: string) {
+    const app = Gio.Subprocess.new(
+        [command],
+        Gio.SubprocessFlags.SEARCH_PATH | Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE
+    );
+    app.spawn(null);
 }
 
 export default function SideBar(gdkmonitor: Gdk.Monitor) {
@@ -39,16 +36,7 @@ export default function SideBar(gdkmonitor: Gdk.Monitor) {
                 spacing={10}
             >
                 {/* TOP - App Shortcuts */}
-                <box
-                    orientation={Gtk.Orientation.VERTICAL}
-                    valign={Gtk.Align.START}
-                    spacing={8}
-                >
-                    <Shortcut icon="utilities-terminal-symbolic" command="ghostty" tooltip="Terminal" />
-                    <Shortcut icon="firefox-symbolic" command="firefox" tooltip="Firefox" />
-                    <Shortcut icon="antigravity-symbolic" command="antigravity" tooltip="Antigravity" />
-                    <Shortcut icon="steam-symbolic" command="steam" tooltip="Steam" />
-                </box>
+                <AppList />
 
                 {/* CENTER - Media Visualizer */}
                 <MediaVisualizer />

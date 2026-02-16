@@ -122,7 +122,10 @@ window.SideBar {
     all: unset;
     color: rgba(white, 0.6);
     padding: 8px 0;
+    margin: 2px; // Add some margin for the active indicator to look good
+    border-radius: 6px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 2px solid transparent; // Reserve space for border
 
     image {
       font-size: 18px;
@@ -131,21 +134,29 @@ window.SideBar {
     &:hover {
       color: white;
       text-shadow: 0 0 10px rgba($mauve, 0.6);
+      background: rgba($surface1, 0.3);
+    }
+
+    &.active {
+      color: $text;
+      border-left-color: $text;
+      background: rgba($text, 0.1);
     }
   }
 
-  // --- Media Visualizer ---
   .media-visualizer {
-    padding: 6px 0;
+    padding: 4px;
+    margin-left: 3px;
+    min-width: 32px;
 
-    .vis-bars {
-      min-height: 30px;
+    .vis-noise-line {
+      // GTK CSS doesn't support flexbox layout properties
+      // Layout is handled by Gtk.Box properties in the widget code
 
-      .vis-bar {
-        background: rgba(white, 0.6);
-        border-radius: 1px;
-        min-width: 3px;
-        transition: min-height 0.4s ease;
+      .vis-noise-seg {
+        background: rgba($text, 0.5);
+        min-height: 1px;
+        border-radius: 2px;
       }
     }
   }
@@ -154,8 +165,11 @@ window.SideBar {
   .media-controls {
     .media-title {
       font-family: "JetBrainsMono Nerd Font", monospace;
-      font-size: 9px;
+      font-size: 1px;
       color: rgba(white, 0.8);
+      transform: rotate(90deg) scale(12);
+      transform-origin: center center;
+      margin-right: 5px;
     }
 
     button {
@@ -178,14 +192,15 @@ window.SideBar {
     border-top: 1px solid rgba($surface1, 0.3);
     padding-top: 10px;
   }
+
 }
 
 // ═══════════════════════════════════════════════
 // GLOBAL POPOVERS
 // ═══════════════════════════════════════════════
 popover {
-  background-color: $base;
-  border: 1px solid $surface1;
+  //background-color: $base;
+  //border: 1px solid $surface1;
   border-radius: 12px;
   padding: 10px;
   color: $text;

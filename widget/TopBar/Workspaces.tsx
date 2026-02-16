@@ -16,7 +16,7 @@ export default function Workspaces() {
 
         for (let i = 1; i <= count; i++) {
             const dot = <box cssClasses={["dot"]} /> as Gtk.Box;
-            dot.set_size_request(6, 10); // ancho, alto del punto interno
+            dot.set_size_request(6, 10);
 
             const btn = <button
                 cssClasses={["ws-dot", current === i ? "active" : ""]}
