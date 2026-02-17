@@ -11,6 +11,7 @@ import BluetoothIndicator from "./TopBar/Bluetooth"
 import NetworkIndicator from "./TopBar/Network"
 import BatteryIndicator from "./TopBar/Battery"
 import SysTray from "./TopBar/SysTray"
+import RightMenuToggle from "./TopBar/RightMenuToggle"
 
 export default function TopBar(gdkmonitor: Gdk.Monitor) {
   const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
@@ -38,7 +39,8 @@ export default function TopBar(gdkmonitor: Gdk.Monitor) {
         </box>
 
         {/* RIGHT — System icons */}
-        <box cssClasses={["bar-right"]} halign={Gtk.Align.END} hexpand spacing={6}>
+        <box cssClasses={['bar-right']} halign={Gtk.Align.END} hexpand spacing={6}>
+          <RightMenuToggle />
           <Clipboard />
           <SystemMonitor />
           <Volume />

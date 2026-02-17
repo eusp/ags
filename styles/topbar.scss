@@ -1,0 +1,74 @@
+@use '../styles/colors' as *;
+
+// ═══════════════════════════════════════════════
+// TOP BAR
+// ═══════════════════════════════════════════════
+window.TopBar {
+  background: transparent;
+
+  .bar-content {
+    background-color: $crust;
+    min-height: 30px;
+    padding: 0px 16px;
+    border-bottom: 2px solid rgba($text, 0.3);
+  }
+
+  // --- Workspaces (círculos) ---
+  .workspaces {
+    .ws-dot {
+      all: unset;
+      border-radius: 50%;
+      background: rgba($overlay0, 0.4);
+      border: 0.25px solid $text;
+      transition: all 0.2s ease;
+
+      .dot {
+        border-radius: 50%;
+      }
+
+      &.active {
+        background: $text;
+        box-shadow: 0 0 6px rgba($text, 0.6);
+      }
+
+      &:hover {
+        background: rgba($text, 0.4);
+      }
+    }
+  }
+
+  // --- Clock ---
+  .clock {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-weight: 600;
+    font-size: 13px;
+    color: $text;
+    letter-spacing: 0.5px;
+  }
+
+  // --- All buttons in TopBar (icons) ---
+  button,
+  menubutton>button {
+    all: unset;
+    color: rgba($text, 0.7);
+    padding: 0 5px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $text;
+      background: rgba($surface1, 0.3);
+    }
+
+    image {
+      color: inherit;
+    }
+  }
+
+  // Systray icons slightly smaller
+  .bar-right {
+    image {
+      font-size: 14px;
+    }
+  }
+}

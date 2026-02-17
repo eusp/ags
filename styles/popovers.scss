@@ -1,0 +1,78 @@
+@use '../styles/colors' as *;
+
+// ═══════════════════════════════════════════════
+// GLOBAL POPOVERS
+// ═══════════════════════════════════════════════
+popover {
+  //background-color: $base;
+  //border: 1px solid $surface1;
+  border-radius: 12px;
+  padding: 10px;
+  color: $text;
+
+  .popover-title {
+    font-weight: 700;
+    font-size: 12px;
+    color: $text;
+  }
+
+  .divider {
+    min-height: 1px;
+    background: rgba($surface1, 0.5);
+    margin: 4px 0;
+  }
+
+  button {
+    all: unset;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: $text;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba($surface1, 0.4);
+    }
+  }
+
+  // Clipboard
+  .clipboard-popover {
+    min-width: 250px;
+
+    .clip-item-label {
+      font-size: 11px;
+      color: $subtext0;
+    }
+  }
+
+  // System Monitor
+  .sysmon-popover {
+    min-width: 220px;
+
+    .sysmon-label {
+      font-family: "JetBrainsMono Nerd Font", monospace;
+      font-size: 12px;
+      color: $sapphire;
+    }
+  }
+
+  // Microphone
+  .mic-popover {
+    min-width: 200px;
+  }
+
+  // Bluetooth
+  .bt-popover {
+    min-width: 200px;
+
+    .bt-connected {
+      color: $green;
+      font-size: 10px;
+    }
+  }
+
+  // Network / Volume (existing)
+  box.network-popover,
+  box.volume-popover {
+    min-width: 150px;
+  }
+}

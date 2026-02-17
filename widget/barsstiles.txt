@@ -37,7 +37,7 @@ Espaciado: los íconos están alineados de manera uniforme y con espacio suficie
 
 Posición y tamaño
 
-Barra vertical pegada al borde derecho de la pantalla.
+Barra vertical pegada al borde izquierdo de la pantalla.
 
 Anchura: bastante delgada, parece de unos 36–42 px.
 
@@ -66,6 +66,44 @@ La información textual (como el título de la canción) está en blanco, con ti
 
 El estilo general es minimalista, limpio y enfocado en funcionalidad visual clara, sin bordes pesados ni sombras marcadas.
 
+* Barra lateral derecha (right menu)
+
+Posición y tamaño
+
+Barra vertical pegada al borde derecho de la pantalla.
+
+Anchura: 320px de ancho fijo.
+
+Altura: ocupa toda la pantalla.
+
+Fondo: sólido oscuro, semitransparente, con animación de deslizamiento desde la derecha.
+
+Contenido
+
+En la parte superior: **Configuración Rápida**
+ - Botones de acceso rápido: Internet (toggle Wi-Fi), Bluetooth (toggle), Sonido (mute/unmute), Música (abre reproductor)
+ - Panel de notificaciones con lista de notificaciones recientes y botón de limpiar
+
+En la parte central: **Aplicaciones Recientes**
+ - Lista de aplicaciones usadas recientemente con iconos y nombres
+ - Click para lanzar la aplicación correspondiente
+
+En la parte media-central: **Buscador de Aplicaciones**
+ - Campo de búsqueda con filtrado en tiempo real
+ - Resultados de búsqueda con iconos de aplicaciones
+ - Autocompletado y lanzamiento rápido
+
+En la parte inferior: **Acciones del Sistema**
+ - Botones en cuadrícula: Cerrar Sesión (🚪), Suspender (💤), Reiniciar (🔄), Apagar (⏻)
+ - Confirmación para acciones destructivas
+
+Tipografía y estilo
+
+Diseño minimalista con espaciado generoso entre secciones.
+Iconos emoji para acción visual rápida.
+Animaciones suaves de entrada/salida.
+Colores consistentes con el resto del sistema.
+
 * Estructura del Proyecto
 
 .
@@ -74,6 +112,7 @@ El estilo general es minimalista, limpio y enfocado en funcionalidad visual clar
 ├── widget/                # Carpeta de componentes (widgets)
 │   ├── SideBar.tsx        # Contenedor principal de la barra lateral izquierda
 │   ├── TopBar.tsx         # Contenedor principal de la barra superior
+│   ├── RightMenu.tsx      # Contenedor principal del menú derecho
 │   ├── SideBar/           # Componentes específicos de la barra lateral
 │   │   ├── AppList.tsx    # Lógica de lista de apps (fijas + dinámicas por workspace)
 │   │   ├── MediaControls.tsx      # Controles multimedia
@@ -95,6 +134,16 @@ El estilo general es minimalista, limpio y enfocado en funcionalidad visual clar
 │   │   ├── Clipboard.tsx  # Historial del portapapeles
 │   │   ├── PowerMenu.tsx  # Menú de apagado/reinicio
 │   │   └── SysTray.tsx    # Bandeja de sistema
+│   ├── RightMenu/         # Componentes específicos del menú derecho
+│   │   ├── QuickSettings.tsx    # Configuración rápida (Internet, Bluetooth, Sonido, Música)
+│   │   ├── InternetToggle.tsx   # Control de conexión a internet
+│   │   ├── BluetoothToggle.tsx  # Control de Bluetooth
+│   │   ├── SoundControl.tsx     # Control de volumen de audio
+│   │   ├── MusicControl.tsx     # Acceso a reproductor de música
+│   │   ├── NotificationPanel.tsx # Panel de notificaciones
+│   │   ├── RecentApps.tsx       # Lista de aplicaciones recientes
+│   │   ├── AppLauncher.tsx      # Buscador de aplicaciones
+│   │   └── PowerActions.tsx     # Acciones de sistema (cerrar sesión, suspender, etc)
 │   ├── reglasags.txt      # Reglas y guías de desarrollo para AGS/GTK4
 │   └── barsstiles.txt     # Documentación de diseño y estructura
 ├── package.json           # Dependencias del proyecto
