@@ -5,17 +5,34 @@ import QuickSettings from "./RightMenu/QuickSettings"
 import AppsPanel from "./RightMenu/AppsPanel"
 import PowerActions from "./RightMenu/PowerActions"
 
+declare const imports: any
+const { GLib } = imports.gi
+
 let rightMenuWindowRef: Astal.Window | null = null
+let appsPanelRef: any = null
 
 export function toggleRightMenu() {
     if (!rightMenuWindowRef) return
 
-    if (rightMenuWindowRef.visible) rightMenuWindowRef.hide()
-    else rightMenuWindowRef.show()
+    if (rightMenuWindowRef.visible) {
+        rightMenuWindowRef.hide()
+    } else {
+        rightMenuWindowRef.show()
+        // Focus on search entry when menu opens
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
+            if (appsPanelRef && appsPanelRef.searchEntry) {
+                appsPanelRef.searchEntry.grab_focus()
+            }
+            return false // Don't repeat
+        })
+    }
 }
 
 export default function RightMenu(gdkmonitor: Gdk.Monitor) {
     const { TOP, BOTTOM, RIGHT } = Astal.WindowAnchor
+
+    const appsPanel = <AppsPanel />
+    appsPanelRef = appsPanel
 
     const rightMenuWindow = (
         <Astal.Window
@@ -50,7 +67,7 @@ export default function RightMenu(gdkmonitor: Gdk.Monitor) {
                     valign={Gtk.Align.END}
                     vexpand={true}
                 >
-                    <AppsPanel />
+                    {appsPanel}
                 </box>
 
                 {/* BOTTOM - Power Actions */}

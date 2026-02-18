@@ -52,7 +52,18 @@ export default function AppsPanel() {
         hexpand: true,
     })
 
+    // Expose search entry for external focus management
+    root.searchEntry = searchEntry
+
     let isShowingAll = false
+    let firstHighlightedApp: any = null
+
+    // Handle Enter key to launch first highlighted app
+    searchEntry.connect("activate", () => {
+        if (firstHighlightedApp) {
+            launchApp(firstHighlightedApp)
+        }
+    })
 
     const menuButton = new Gtk.Button({
         cssClasses: ["menu-button"],
@@ -88,6 +99,15 @@ export default function AppsPanel() {
 
     const flow = createFlowBox(["apps-grid"])
 
+    const noResultsLabel = new Gtk.Label({
+        label: "No se encontraron aplicaciones",
+        cssClasses: ["no-results-label"],
+        halign: Gtk.Align.CENTER,
+        valign: Gtk.Align.CENTER,
+        visible: false,
+    })
+    noResultsLabel.set_size_request(-1, 225)
+
     const scrolled = new Gtk.ScrolledWindow({
         hexpand: true,
         vexpand: true,
@@ -104,18 +124,7 @@ export default function AppsPanel() {
         clearGrid(flow)
         clearGrid(pinnedFlow)
     }
-
-    const appendEmpty = (text: string) => {
-        const empty = new Gtk.Label({
-            label: text,
-            halign: Gtk.Align.CENTER,
-            valign: Gtk.Align.CENTER,
-            vexpand: true,
-            cssClasses: ["empty-state"],
-        })
-        flow.append(empty)
-    }
-
+    
     const createAppTile = (appInfo: any, cssClasses: string[] = ["app-tile"]) => {
         const displayName = getDisplayName(appInfo)
         const iconObj = appInfo.get_icon ? appInfo.get_icon() : null
@@ -152,15 +161,22 @@ export default function AppsPanel() {
         return btn
     }
 
+    const createHighlightedAppTile = (appInfo: any) => {
+        const tile = createAppTile(appInfo, ["app-tile", "highlighted"])
+        return tile
+    }
+
     const appendAppTile = (appInfo: any) => flow.append(createAppTile(appInfo))
     const appendPinnedTile = (appInfo: any) => pinnedFlow.append(createAppTile(appInfo, ["app-tile", "pinned-tile"]))
 
     const render = () => {
         const q = searchEntry.get_text().trim().toLowerCase()
         clearAllGrids()
+        firstHighlightedApp = null
 
         if (q.length === 0) {
             scrolled.visible = false
+            noResultsLabel.visible = false
 
             pinnedRow.visible = pinnedApps.length > 0
             pinnedApps.forEach((a) => appendPinnedTile(a))
@@ -180,11 +196,22 @@ export default function AppsPanel() {
             .slice(0, 60)
 
         if (filtered.length === 0) {
-            appendEmpty("No se encontraron aplicaciones")
+            scrolled.visible = false
+            noResultsLabel.visible = true
             return
         }
 
-        filtered.forEach((a) => appendAppTile(a))
+        noResultsLabel.visible = false
+        
+        // Add all apps, with first one highlighted
+        filtered.forEach((app, index) => {
+            if (index === 0) {
+                firstHighlightedApp = app
+                flow.append(createHighlightedAppTile(app))
+            } else {
+                flow.append(createAppTile(app))
+            }
+        })
     }
 
     const showAllApps = () => {
@@ -219,6 +246,7 @@ export default function AppsPanel() {
     searchBox.append(menuButton)
 
     root.append(pinnedRow)
+    root.append(noResultsLabel)
     root.append(scrolled)
     root.append(searchBox)
 

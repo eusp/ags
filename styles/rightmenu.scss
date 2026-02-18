@@ -150,6 +150,17 @@ window.RightMenu {
         font-size: 12px;
       }
     }
+
+    &.highlighted {
+      background: rgba($text, 0.1);
+      border-radius: 8px;
+      box-shadow: 0 0 0 2px rgba($text, 0.3);
+    }
+  }
+
+  .no-results-label {
+    color: rgba($text, 0.6);
+    font-size: 11px;
   }
 
   // ═══════════════════════════════════════════════
