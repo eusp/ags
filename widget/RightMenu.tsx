@@ -18,13 +18,6 @@ export function toggleRightMenu() {
         rightMenuWindowRef.hide()
     } else {
         rightMenuWindowRef.show()
-        // Focus on search entry when menu opens
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
-            if (appsPanelRef && appsPanelRef.searchEntry) {
-                appsPanelRef.searchEntry.grab_focus()
-            }
-            return false // Don't repeat
-        })
     }
 }
 
@@ -45,6 +38,15 @@ export default function RightMenu(gdkmonitor: Gdk.Monitor) {
             application={app}
             layer={Astal.Layer.TOP}
             keymode={Astal.Keymode.ON_DEMAND}
+            onShow={() => {
+                // Focus on search entry when menu is shown
+                GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
+                    if (appsPanelRef && appsPanelRef.searchEntry) {
+                        appsPanelRef.searchEntry.grab_focus()
+                    }
+                    return false // Don't repeat
+                })
+            }}
         >
             <box
                 orientation={Gtk.Orientation.VERTICAL}

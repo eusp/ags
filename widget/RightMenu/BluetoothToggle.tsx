@@ -1,31 +1,43 @@
 import { Gtk } from "ags/gtk4"
-import { execAsync } from "ags/process"
+import Bluetooth from "gi://AstalBluetooth"
+
+const bluetooth = Bluetooth.get_default()
 
 export default function BluetoothToggle() {
-    const toggleBluetooth = () => {
-        execAsync("bluetoothctl power toggle").catch(() => {})
+    const label = new Gtk.Label({
+        cssClasses: ["toggle-detail"],
+        halign: Gtk.Align.START,
+        hexpand: true
+    })
+
+    const icon = new Gtk.Image({
+        cssClasses: ["toggle-icon", "white-icon"]
+    })
+
+    const update = () => {
+        if (bluetooth.adapter) {
+            label.label = bluetooth.adapter.powered ? "Bluetooth" : "Apagado"
+            icon.icon_name = bluetooth.adapter.powered ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic"
+        } else {
+            label.label = "No disponible"
+            icon.icon_name = "bluetooth-disabled-symbolic"
+        }
     }
+
+    bluetooth.connect("notify::adapter", update)
+    if (bluetooth.adapter) bluetooth.adapter.connect("notify::powered", update)
+    update()
 
     return (
         <button
-            cssClasses={["quick-toggle", "bluetooth-toggle"]}
-            onClicked={toggleBluetooth}
+            cssClasses={["quick-settings-item"]}
+            onClicked={() => bluetooth.adapter?.set_powered(!bluetooth.adapter.powered)}
             hexpand={true}
-            vexpand={true}
         >
-            <box
-                orientation={Gtk.Orientation.VERTICAL}
-                spacing={4}
-                halign={Gtk.Align.CENTER}
-            >
-                <label
-                    cssClasses={["toggle-icon"]}
-                    label="🔵"
-                />
-                <label
-                    cssClasses={["toggle-label"]}
-                    label="Bluetooth"
-                />
+            <box spacing={12}>
+                {icon}
+                {label}
+                <label label="" cssClasses={["toggle-arrow"]} />
             </box>
         </button>
     )

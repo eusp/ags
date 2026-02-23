@@ -4,7 +4,7 @@ import { execAsync } from "ags/process"
 export default function MusicControl() {
     const openMusicPlayer = () => {
         execAsync("spotify").catch(() => {
-            execAsync("rhythmbox").catch(() => {})
+            execAsync("rhythmbox").catch(() => { })
         })
     }
 
@@ -13,21 +13,20 @@ export default function MusicControl() {
             cssClasses={["quick-toggle", "music-toggle"]}
             onClicked={openMusicPlayer}
             hexpand={true}
-            vexpand={true}
         >
             <box
-                orientation={Gtk.Orientation.VERTICAL}
-                spacing={4}
-                halign={Gtk.Align.CENTER}
+                orientation={Gtk.Orientation.HORIZONTAL}
+                spacing={12}
+                halign={Gtk.Align.FILL}
             >
-                <label
-                    cssClasses={["toggle-icon"]}
-                    label="🎵"
-                />
-                <label
-                    cssClasses={["toggle-label"]}
-                    label="Música"
-                />
+                <box spacing={12} hexpand={true}>
+                    <label cssClasses={["toggle-icon"]} label="󰎈" />
+                    <box orientation={Gtk.Orientation.VERTICAL} valign={Gtk.Align.CENTER}>
+                        <label cssClasses={["toggle-title"]} label="Multimedia" halign={Gtk.Align.START} />
+                        <label cssClasses={["toggle-label"]} label="Abrir reproductor" halign={Gtk.Align.START} />
+                    </box>
+                </box>
+                <label label="" cssClasses={["toggle-arrow"]} />
             </box>
         </button>
     )

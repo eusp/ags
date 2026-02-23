@@ -1,31 +1,47 @@
 import { Gtk } from "ags/gtk4"
-import { execAsync } from "ags/process"
+import Network from "gi://AstalNetwork"
+
+const network = Network.get_default()
 
 export default function InternetToggle() {
-    const toggleWifi = () => {
-        execAsync("nmcli radio wifi toggle").catch(() => {})
+    const label = new Gtk.Label({
+        cssClasses: ["toggle-detail"],
+        halign: Gtk.Align.START,
+        hexpand: true
+    })
+
+    const icon = new Gtk.Image({
+        cssClasses: ["toggle-icon", "white-icon"]
+    })
+
+    const update = () => {
+        const wifi = network.wifi
+        if (wifi) {
+            label.label = wifi.ssid || "WiFi Conectado"
+            icon.icon_name = network.connectivity === Network.Connectivity.FULL ? "network-wireless-signal-excellent-symbolic" : "network-wireless-offline-symbolic"
+        } else if (network.wired) {
+            label.label = "Ethernet"
+            icon.icon_name = "network-wired-symbolic"
+        } else {
+            label.label = "Desconectado"
+            icon.icon_name = "network-offline-symbolic"
+        }
     }
+
+    network.connect("notify::wifi", update)
+    network.connect("notify::wired", update)
+    update()
 
     return (
         <button
-            cssClasses={["quick-toggle", "internet-toggle"]}
-            onClicked={toggleWifi}
+            cssClasses={["quick-settings-item"]}
+            onClicked={() => network.wifi?.scan()}
             hexpand={true}
-            vexpand={true}
         >
-            <box
-                orientation={Gtk.Orientation.VERTICAL}
-                spacing={4}
-                halign={Gtk.Align.CENTER}
-            >
-                <label
-                    cssClasses={["toggle-icon"]}
-                    label="📡"
-                />
-                <label
-                    cssClasses={["toggle-label"]}
-                    label="Internet"
-                />
+            <box spacing={12}>
+                {icon}
+                {label}
+                <label label="" cssClasses={["toggle-arrow"]} />
             </box>
         </button>
     )

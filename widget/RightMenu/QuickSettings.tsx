@@ -1,10 +1,9 @@
 import { Gtk } from "ags/gtk4"
-import { execAsync } from "ags/process"
-
+import ClockWeather from "./ClockWeather"
 import InternetToggle from "./InternetToggle"
 import BluetoothToggle from "./BluetoothToggle"
 import SoundControl from "./SoundControl"
-import MusicControl from "./MusicControl"
+import MicrophoneControl from "./MicrophoneControl"
 import NotificationPanel from "./NotificationPanel"
 
 export default function QuickSettings() {
@@ -12,30 +11,24 @@ export default function QuickSettings() {
         <box
             orientation={Gtk.Orientation.VERTICAL}
             cssClasses={["quick-settings"]}
-            spacing={12}
+            spacing={16}
         >
-            {/* Header */}
-            <label
-                cssClasses={["section-title"]}
-                label="Configuración Rápida"
-                halign={Gtk.Align.START}
-            />
-            
-            {/* Quick Settings Grid */}
+            {/* Minimalist Clock & Weather */}
+            <ClockWeather />
+
             <box
-                orientation={Gtk.Orientation.HORIZONTAL}
-                cssClasses={["quick-settings-grid"]}
-                spacing={8}
-                homogeneous={true}
+                orientation={Gtk.Orientation.VERTICAL}
+                cssClasses={["quick-settings-list"]}
+                spacing={4}
             >
                 <InternetToggle />
                 <BluetoothToggle />
                 <SoundControl />
-                <MusicControl />
+                <MicrophoneControl />
             </box>
 
             {/* Notifications Panel */}
-            <NotificationPanel />
+            {/*<NotificationPanel />*/}
         </box>
     )
 }

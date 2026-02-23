@@ -4,9 +4,9 @@ import Wp from "gi://AstalWp"
 
 const wp = Wp.get_default()
 
-export default function SoundControl() {
-    const speaker = wp?.defaultSpeaker
-    if (!speaker) return <box />
+export default function MicrophoneControl() {
+    const mic = wp?.defaultMicrophone
+    if (!mic) return <box />
 
     const icon = new Gtk.Image({
         cssClasses: ["toggle-icon", "white-icon"]
@@ -27,27 +27,27 @@ export default function SoundControl() {
     slider.set_range(0, 1)
     slider.connect("value-changed", () => {
         const val = slider.get_value()
-        if (val > 0 && speaker.mute) {
-            speaker.mute = false
+        if (val > 0 && mic.mute) {
+            mic.mute = false
         }
-        speaker.set_volume(val)
+        mic.set_volume(val)
     })
 
     const update = () => {
-        icon.icon_name = speaker.mute ? "audio-volume-muted-symbolic" : (speaker.volumeIcon || "audio-volume-high-symbolic")
-        slider.set_value(speaker.mute ? 0 : speaker.volume)
+        icon.icon_name = mic.mute ? "microphone-sensitivity-muted-symbolic" : "microphone-sensitivity-high-symbolic"
+        slider.set_value(mic.mute ? 0 : mic.volume)
     }
 
-    speaker.connect("notify::volume", update)
-    speaker.connect("notify::mute", update)
+    mic.connect("notify::volume", update)
+    mic.connect("notify::mute", update)
     update()
 
     muteButton.connect("clicked", () => {
-        speaker.mute = !speaker.mute
+        mic.mute = !mic.mute
     })
 
     return (
-        <box cssClasses={["quick-settings-item", "sound-control-item"]} spacing={12}>
+        <box cssClasses={["quick-settings-item", "mic-control-item"]} spacing={12}>
             {muteButton}
             {slider}
             <button

@@ -14,6 +14,33 @@ window.RightMenu {
   }
 
   // ═══════════════════════════════════════════════
+  // CLOCK & WEATHER
+  // ═══════════════════════════════════════════════
+  .clock-weather-container {
+    padding: 20px;
+
+    .clock-time {
+      font-size: 48px;
+      font-weight: 800;
+      color: $text;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .clock-date {
+      margin-top: -25px;
+      font-size: 14px;
+      color: rgba($text, 0.7);
+    }
+
+    .clock-weather {
+      margin-top: -25px;
+      margin-left: 15px;
+      font-size: 13px;
+      color: $blue;
+    }
+  }
+
+  // ═══════════════════════════════════════════════
   // QUICK SETTINGS
   // ═══════════════════════════════════════════════
 
@@ -21,45 +48,84 @@ window.RightMenu {
     padding: 0px;
   }
 
-  .quick-toggle,
+  .quick-settings-list {
+    margin-top: -20px;
+  }
+
+  .quick-settings-item {
+    all: unset;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: transparent;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba($surface1, 0.3);
+    }
+
+    .toggle-icon {
+      font-size: 18px;
+      color: $text;
+      min-width: 24px;
+    }
+
+    .toggle-detail {
+      font-size: 13px;
+      color: rgba($text, 0.8);
+    }
+
+    .toggle-slider {
+      margin: -8px -12px;
+
+      trough {
+        min-height: 4px;
+        background: rgba($text, 0.1);
+        border-radius: 100px;
+      }
+
+      highlight {
+        background: rgba($text, 0.5);
+        border-radius: 100px;
+      }
+
+      slider {
+        min-height: 6px;
+        min-width: 6px;
+        margin: -2px;
+        background: $text;
+        border-radius: 100px;
+      }
+    }
+
+    .mute-button,
+    .arrow-button {
+      all: unset;
+      padding: 0;
+      background: transparent;
+      border: none;
+      transition: all 0.2s ease;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    .mute-button {
+      min-width: 24px;
+    }
+
+    .toggle-arrow {
+      font-size: 10px;
+      color: rgba($text, 0.3);
+    }
+  }
+
   .clear-button,
   .menu-button,
   .power-button {
     all: unset;
     border-radius: 8px;
     transition: background 0.15s ease;
-  }
-
-  .quick-toggle,
-  .power-button {
-    padding: 10px 8px;
-    border-radius: 10px;
-  }
-
-  .clear-button {
-    padding: 4px 8px;
-  }
-
-  .menu-button {
-    padding: 4px 12px;
-  }
-
-  .quick-toggle {
-    background: rgba($surface1, 0.25);
-
-    &:hover {
-      background: rgba($surface1, 0.45);
-    }
-
-    .toggle-icon {
-      font-size: 16px;
-      color: $text;
-    }
-
-    .toggle-label {
-      font-size: 11px;
-      color: rgba($text, 0.85);
-    }
   }
 
   // ═══════════════════════════════════════════════
@@ -87,11 +153,12 @@ window.RightMenu {
   }
 
   // ═══════════════════════════════════════════════
-  // APP LAUNCHER (AppLauncher.tsx)
+  // APP PANEL
   // ═══════════════════════════════════════════════
 
   .apps-panel {
-    background: rgba($surface0, 0.18);
+    border-top: 1px solid rgba($text, 0.2);
+    border-bottom: 1px solid rgba($text, 0.2);
     border-radius: 12px;
     padding: 8px;
   }
@@ -105,17 +172,20 @@ window.RightMenu {
   }
 
   .app-search {
+    background: transparent;
     border-radius: 10px;
-    background: rgba($surface0, 0.35);
     color: $text;
+    border-bottom: 1px solid rgba($text, 0.2);
   }
 
   .search-box {
-    padding: 4px;
+    padding: 0px;
   }
 
   .menu-button {
-    background: rgba($surface0, 0.35);
+    border-bottom: 1px solid rgba($text, 0.2);
+    padding-left: 10px;
+    padding-right: 10px;
     color: $text;
 
     &:hover {
