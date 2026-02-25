@@ -1,8 +1,20 @@
 {
+  "name": "ags-config",
+  "version": "1.0.0",
+  "description": "Custom AGS configuration using Astal and GTK4",
+  "main": "app.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "ags run .",
+    "build": "tsc",
+    "check": "tsc --noEmit"
+  },
   "dependencies": {
-    "ags": "*",
-    "fft-js": "^0.0.12",
-    "gnim": "*"
+    "fft-js": "^0.0.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   },
   "prettier": {
     "semi": false,

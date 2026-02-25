@@ -62,23 +62,31 @@ export default function RightMenu(gdkmonitor: Gdk.Monitor) {
                     <QuickSettings />
                 </box>
 
-                {/* CENTER - Recent apps + launcher */}
+                {/* CENTER & BOTTOM - Apps Panel + Power Actions (Stuck together) */}
                 <box
                     orientation={Gtk.Orientation.VERTICAL}
-                    cssClasses={["apps-panel-zone"]}
-                    valign={Gtk.Align.END}
+                    cssClasses={["menu-bottom-zone"]}
+                    spacing={0}
                     vexpand={true}
-                >
-                    {appsPanel}
-                </box>
-
-                {/* BOTTOM - Power Actions */}
-                <box
-                    orientation={Gtk.Orientation.VERTICAL}
                     valign={Gtk.Align.END}
-                    cssClasses={["power-actions-zone"]}
                 >
-                    <PowerActions />
+                    {/* Apps Panel */}
+                    <box
+                        orientation={Gtk.Orientation.VERTICAL}
+                        cssClasses={["apps-panel-zone"]}
+                    >
+                        {appsPanel}
+                    </box>
+
+                    {/* Power Actions */}
+                    <box
+                        orientation={Gtk.Orientation.HORIZONTAL}
+                        cssClasses={["power-actions-zone"]}
+                        hexpand={true}
+                        halign={Gtk.Align.END}
+                    >
+                        <PowerActions />
+                    </box>
                 </box>
             </box>
         </Astal.Window>
