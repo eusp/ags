@@ -62,11 +62,30 @@ export default function AppList() {
                 btn.set_child(new Gtk.Image({ iconName: app.icon }))
 
                 btn.connect("clicked", () => {
+                    const clients = hyprland.clients
                     const existing = clients.find(c => (c.class?.toLowerCase() || "").includes(app.matches))
-                    if (existing) {
+                    const currentWorkspace = hyprland.focusedWorkspace
+
+                    if (!existing) {
+                        launchDetached(app.command)
+                        return
+                    }
+
+                    if (currentWorkspace && existing.workspace && existing.workspace.id === currentWorkspace.id) {
+                        // Minimize to special workspace
+                        const addr = existing.address.startsWith("0x") ? existing.address : `0x${existing.address}`
+                        const args = `special:minimized,address:${addr}`
+                        hyprland.dispatch("movetoworkspacesilent", args)
+                    } else if (existing.workspace && (existing.workspace.name || "").includes("minimized")) {
+                        // Restore from special workspace
+                        const addr = existing.address.startsWith("0x") ? existing.address : `0x${existing.address}`
+                        const target = currentWorkspace ? String(currentWorkspace.id) : "+0"
+                        const args = `${target},address:${addr}`
+                        hyprland.dispatch("movetoworkspace", args)
                         existing.focus()
                     } else {
-                        launchDetached(app.command)
+                        // Switch to the workspace where it is open
+                        existing.focus()
                     }
                 })
 
@@ -78,7 +97,10 @@ export default function AppList() {
                 const isDefault = DEFAULT_APPS.some(a => (client.class?.toLowerCase() || "").includes(a.matches))
                 if (isDefault) return
 
-                if (!focused || client.workspace.id !== focused.workspace.id) return
+                const isMinimized = client.workspace && (client.workspace.name || "").includes("minimized")
+                const inCurrentWS = focused && focused.workspace && client.workspace.id === focused.workspace.id
+
+                if (!isMinimized && !inCurrentWS) return
 
                 const isActive = focused && focused.address === client.address
 
@@ -88,7 +110,26 @@ export default function AppList() {
 
                 btn.set_child(new Gtk.Image({ iconName: (client.class?.toLowerCase() || "") + "-symbolic" }))
 
-                btn.connect("clicked", () => client.focus())
+                btn.connect("clicked", () => {
+                    const currentWorkspace = hyprland.focusedWorkspace
+
+                    if (currentWorkspace && client.workspace && client.workspace.id === currentWorkspace.id) {
+                        // Minimize to special workspace
+                        const addr = client.address.startsWith("0x") ? client.address : `0x${client.address}`
+                        const args = `special:minimized,address:${addr}`
+                        hyprland.dispatch("movetoworkspacesilent", args)
+                    } else if (client.workspace && (client.workspace.name || "").includes("minimized")) {
+                        // Restore from special workspace
+                        const addr = client.address.startsWith("0x") ? client.address : `0x${client.address}`
+                        const target = currentWorkspace ? String(currentWorkspace.id) : "+0"
+                        const args = `${target},address:${addr}`
+                        hyprland.dispatch("movetoworkspace", args)
+                        client.focus()
+                    } else {
+                        // Switch to the workspace where it is open
+                        client.focus()
+                    }
+                })
 
                 container.append(btn)
             })
