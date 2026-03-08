@@ -1,5 +1,6 @@
 import { Gtk } from "ags/gtk4"
 import GLib from "gi://GLib?version=2.0"
+import { MenuPopover } from "../Shared/MenuPopover"
 
 function readFile(path: string): string {
     try {
@@ -40,52 +41,48 @@ function getMemUsage(): string {
 }
 
 export default function SystemMonitor() {
-    const cpuLabel = new Gtk.Label({ xalign: 0 })
-    const memLabel = new Gtk.Label({ xalign: 0 })
+    const menubutton = new Gtk.MenuButton()
+    menubutton.set_child(new Gtk.Image({ iconName: "utilities-system-monitor-symbolic" }))
 
-    cpuLabel.add_css_class("sysmon-label")
-    memLabel.add_css_class("sysmon-label")
+    const cpuLabel = new Gtk.Label({ xalign: 0, cssClasses: ["popover-label"] })
+    const memLabel = new Gtk.Label({ xalign: 0, cssClasses: ["popover-label"] })
 
-    const popoverBox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 8 })
-    popoverBox.add_css_class("sysmon-popover")
-
-    const title = new Gtk.Label({ label: "Rendimiento", halign: Gtk.Align.START })
-    title.add_css_class("popover-title")
-    popoverBox.append(title)
-    popoverBox.append(new Gtk.Box({ cssClasses: ["divider"] }))
+    const statsBox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 10 })
 
     const cpuRow = new Gtk.Box({ spacing: 8 })
-    cpuRow.append(new Gtk.Image({ iconName: "computer-symbolic" }))
-    cpuRow.append(new Gtk.Label({ label: "CPU:" }))
+    cpuRow.append(new Gtk.Image({ iconName: "computer-symbolic", cssClasses: ["dim"] }))
+    cpuRow.append(new Gtk.Label({ label: "CPU:", cssClasses: ["dim"] }))
     cpuRow.append(cpuLabel)
-    popoverBox.append(cpuRow)
+    statsBox.append(cpuRow)
 
     const memRow = new Gtk.Box({ spacing: 8 })
-    memRow.append(new Gtk.Image({ iconName: "drive-harddisk-symbolic" }))
-    memRow.append(new Gtk.Label({ label: "RAM:" }))
+    memRow.append(new Gtk.Image({ iconName: "drive-harddisk-symbolic", cssClasses: ["dim"] }))
+    memRow.append(new Gtk.Label({ label: "RAM:", cssClasses: ["dim"] }))
     memRow.append(memLabel)
-    popoverBox.append(memRow)
+    statsBox.append(memRow)
+
+    // Create the popover ONCE
+    const popover = MenuPopover(menubutton, [
+        {
+            title: "Rendimiento",
+            customChild: statsBox
+        }
+    ])
+    menubutton.set_popover(popover)
 
     const update = () => {
         cpuLabel.label = getCpuUsage()
         memLabel.label = getMemUsage()
     }
 
-    const popover = new Gtk.Popover()
-    popover.set_child(popoverBox)
-
-    // Update while popover is visible
+    // Update periodically
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
         if (popover.visible) update()
         return GLib.SOURCE_CONTINUE
     })
-    popover.connect("notify::visible", () => {
-        if (popover.visible) update()
-    })
 
-    const menubutton = new Gtk.MenuButton()
-    menubutton.set_child(new Gtk.Image({ iconName: "utilities-system-monitor-symbolic" }))
-    menubutton.set_popover(popover)
+    // Initial update
+    update()
 
     return menubutton
 }

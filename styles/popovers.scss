@@ -1,78 +1,90 @@
 @use '../styles/colors' as *;
 
 // ═══════════════════════════════════════════════
-// GLOBAL POPOVERS
+// NEW GLOBAL POPOVER SYSTEM
 // ═══════════════════════════════════════════════
+
 popover {
-  //background-color: $base;
-  //border: 1px solid $surface1;
   border-radius: 12px;
-  padding: 10px;
-  color: $text;
+  background-color: transparent; // Managed by .shared-popover container
 
-  .popover-title {
+  contents {
+    background-color: rgba($crust, 0.95);
+    border: 1px solid rgba($mauve, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    padding: 4px;
+  }
+}
+
+.shared-popover {
+  .popover-section-title {
+    color: $overlay1;
+    font-size: 11px;
     font-weight: 700;
-    font-size: 12px;
-    color: $text;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 8px 12px 4px 12px;
   }
 
-  .divider {
-    min-height: 1px;
-    background: rgba($surface1, 0.5);
-    margin: 4px 0;
-  }
-
-  button {
+  .popover-item {
     all: unset;
-    padding: 6px 8px;
-    border-radius: 6px;
-    color: $text;
-    transition: background 0.2s ease;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: rgba($text, 0.9);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 1px 0;
+
+    image {
+      font-size: 16px;
+      color: $mauve;
+    }
+
+    label {
+      font-size: 13.5px;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+    }
 
     &:hover {
-      background: rgba($surface1, 0.4);
+      background-color: rgba($mauve, 0.12);
+      color: $blue;
+
+      image {
+        color: $blue;
+      }
+    }
+
+    &.dangerous {
+      image {
+        color: rgba($red, 0.8);
+      }
+
+      &:hover {
+        background-color: rgba($red, 0.15);
+        color: $red;
+
+        image {
+          color: $red;
+        }
+      }
     }
   }
 
-  // Clipboard
-  .clipboard-popover {
-    min-width: 250px;
-
-    .clip-item-label {
-      font-size: 11px;
-      color: $subtext0;
-    }
+  .popover-separator {
+    background-color: rgba($surface1, 0.4);
+    margin: 6px 10px;
+    min-height: 1px;
   }
+}
 
-  // System Monitor
-  .sysmon-popover {
-    min-width: 220px;
-
-    .sysmon-label {
-      font-family: "JetBrainsMono Nerd Font", monospace;
-      font-size: 12px;
-      color: $sapphire;
-    }
-  }
-
-  // Microphone
-  .mic-popover {
-    min-width: 200px;
-  }
-
-  // Bluetooth
-  .bt-popover {
-    min-width: 200px;
-
-    .bt-connected {
-      color: $green;
-      font-size: 10px;
-    }
-  }
-
-  // Network / Volume (existing)
-  box.network-popover,
-  box.volume-popover {
-    min-width: 150px;
-  }
+// Keep existing specific overrides if necessary, but update them to match
+.network-popover,
+.volume-popover,
+.mic-popover,
+.bt-popover,
+.sysmon-popover,
+.clipboard-popover {
+  @extend .shared-popover;
+  min-width: 180px;
 }

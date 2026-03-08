@@ -108,43 +108,26 @@ Colores consistentes con el resto del sistema.
 
 .
 ├── app.ts                 # Punto de entrada principal de la configuración de AGS
-├── style.scss             # Estilos globales en SCSS (colores, fuentes, widgets)
+├── style.scss             # Archivo principal de estilos (importa el resto)
+├── styles/                # Carpeta de estilos modularizados (SCSS)
+│   ├── colors.scss        # Paleta de colores (Mauve, Peach, etc.)
+│   ├── global.scss        # Estilos base y variables
+│   ├── popovers.scss      # Diseño premium de popovers y menús
+│   └── ...                # Estilos específicos (sidebar, topbar, etc.)
 ├── widget/                # Carpeta de componentes (widgets)
-│   ├── SideBar.tsx        # Contenedor principal de la barra lateral izquierda
-│   ├── TopBar.tsx         # Contenedor principal de la barra superior
-│   ├── RightMenu.tsx      # Contenedor principal del menú derecho
-│   ├── SideBar/           # Componentes específicos de la barra lateral
-│   │   ├── AppList.tsx    # Lógica de lista de apps (fijas + dinámicas por workspace)
-│   │   ├── MediaControls.tsx      # Controles multimedia
-│   │   ├── MediaVisualizer.tsx    # Visualizador multimedia
-│   │   ├── AppMenu.tsx    # Menú de aplicaciones (no usado actualmente en sidebar)
-│   │   ├── AppsDock.tsx   # Dock de apps (alternativa/legacy)
-│   │   ├── Notifications.tsx # Centro de notificaciones
-│   │   └── PowerProfile.tsx  # Perfiles de energía
-│   ├── TopBar/            # Componentes específicos de la barra superior
-│   │   ├── Workspaces.tsx # Indicadores de escritorios virtuales
-│   │   ├── Clock.tsx      # Reloj y fecha
-│   │   ├── ActiveWindow.tsx  # Título de ventana activa
-│   │   ├── Battery.tsx    # Indicador de batería
-│   │   ├── Network.tsx    # Indicador de red/wifi
-│   │   ├── Bluetooth.tsx  # Indicador de bluetooth
-│   │   ├── Volume.tsx     # Control de volumen
-│   │   ├── Microphone.tsx # Control de micrófono
-│   │   ├── SystemMonitor.tsx # Monitor de recursos (CPU/RAM)
-│   │   ├── Clipboard.tsx  # Historial del portapapeles
-│   │   ├── PowerMenu.tsx  # Menú de apagado/reinicio
-│   │   └── SysTray.tsx    # Bandeja de sistema
-│   ├── RightMenu/         # Componentes específicos del menú derecho
-│   │   ├── QuickSettings.tsx    # Configuración rápida (Internet, Bluetooth, Sonido, Música)
-│   │   ├── InternetToggle.tsx   # Control de conexión a internet
-│   │   ├── BluetoothToggle.tsx  # Control de Bluetooth
-│   │   ├── SoundControl.tsx     # Control de volumen de audio
-│   │   ├── MusicControl.tsx     # Acceso a reproductor de música
-│   │   ├── NotificationPanel.tsx # Panel de notificaciones
-│   │   ├── RecentApps.tsx       # Lista de aplicaciones recientes
-│   │   ├── AppLauncher.tsx      # Buscador de aplicaciones
-│   │   └── PowerActions.tsx     # Acciones de sistema (cerrar sesión, suspender, etc)
-│   ├── reglasags.txt      # Reglas y guías de desarrollo para AGS/GTK4
-│   └── barsstiles.txt     # Documentación de diseño y estructura
-├── package.json           # Dependencias del proyecto
+│   ├── Shared/            # Componentes reutilizables
+│   │   └── MenuPopover.tsx # Sistema modular de menús y popovers
+│   ├── SideBar/           # Widgets de la barra lateral izquierda
+│   │   ├── AppList.tsx    # Apps dinámicas y menús contextuales
+│   │   └── ...
+│   ├── TopBar/            # Widgets de la barra superior
+│   │   ├── Volume.tsx
+│   │   ├── Network.tsx
+│   │   └── ...
+│   ├── RightMenu/         # Widgets del menú lateral derecho
+│   └── ...
+├── README.md              # Documentación técnica y de uso
+├── reglasags.txt          # Guías de desarrollo GTK4/AGS
+├── planproyecto.txt       # Plan de diseño y estructura
+├── package.json           # Dependencias y scripts
 └── tsconfig.json          # Configuración de TypeScript

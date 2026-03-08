@@ -1,14 +1,15 @@
 import { Gtk } from "ags/gtk4"
 import Network from "gi://AstalNetwork"
 import { execAsync } from "ags/process"
+import { MenuPopover } from "../Shared/MenuPopover"
 
 const network = Network.get_default()
-const { DeviceType, Connectivity } = Network
+const { Connectivity } = Network
 
 export default function NetworkIndicator() {
     const icon = new Gtk.Image()
-    const popoverBox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 10 })
-    popoverBox.add_css_class("network-popover")
+    const menubutton = new Gtk.MenuButton()
+    menubutton.set_child(icon)
 
     const update = () => {
         const primary = network.primary
@@ -29,38 +30,44 @@ export default function NetworkIndicator() {
 
         icon.iconName = iconName
 
-        // Actualizar popover
-        while (popoverBox.get_first_child()) popoverBox.remove(popoverBox.get_first_child()!)
-        const row = new Gtk.Box({ spacing: 8 })
-        row.append(new Gtk.Image({ iconName }))
-        row.append(new Gtk.Label({ label: labelText }))
-        popoverBox.append(row)
-
-        popoverBox.append(new Gtk.Box({ cssClasses: ["divider"] }))
-
-        const configButton = new Gtk.Button()
-        configButton.connect("clicked", () => execAsync("nm-connection-editor"))
-        const buttonBox = new Gtk.Box({ spacing: 8 })
-        buttonBox.append(new Gtk.Image({ iconName: "preferences-system-network-symbolic" }))
-        buttonBox.append(new Gtk.Label({ label: "Configuración" }))
-        configButton.set_child(buttonBox)
-        popoverBox.append(configButton)
+        // Create or update Sections - For simplicity with current MenuPopover, 
+        // we recreate if needed but Network normally stable. 
+        // Actually, let's create it once with the initial state and just update the icon/label if we can.
+        // But MenuPopover creates widgets. Let's just make it call it once.
+        if (!menubutton.get_popover()) {
+            const popover = MenuPopover(menubutton, [
+                {
+                    items: [{
+                        label: labelText,
+                        icon: iconName,
+                        onClick: () => { }
+                    }]
+                },
+                {
+                    items: [{
+                        label: "Configuración",
+                        icon: "preferences-system-network-symbolic",
+                        onClick: () => execAsync("nm-connection-editor")
+                    }]
+                }
+            ])
+            menubutton.set_popover(popover)
+        }
     }
 
-    network.connect("notify::primary", update)
-    network.connect("notify::connectivity", update)
+    network.connect("notify::primary", () => {
+        // Here we might need to recreate the popover if the labels strictly need to change,
+        // or we refactor MenuPopover to be updateable. 
+        // For now, let's just clear the popover and recreate IT ONLY when state changes, not on every map.
+        menubutton.set_popover(null!)
+        update()
+    })
+    network.connect("notify::connectivity", () => {
+        menubutton.set_popover(null!)
+        update()
+    })
 
-    // No actualizar hasta que el widget esté mapeado, para evitar warnings
-    icon.connect("map", update)
+    update()
 
-    return (() => {
-        const menubutton = new Gtk.MenuButton()
-        menubutton.set_child(icon)
-
-        const popover = new Gtk.Popover()
-        popover.set_child(popoverBox)
-        menubutton.set_popover(popover)
-
-        return menubutton
-    })()
+    return menubutton
 }

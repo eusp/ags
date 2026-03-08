@@ -8,7 +8,6 @@ window.SideBar {
 
   .sidebar-container {
     background-color: $crust;
-    border-left: 1px solid rgba($surface0, 0.4);
     padding: 12px 0px;
     min-width: 38px;
     border-right: 2px solid rgba($text, 0.3);
@@ -17,7 +16,7 @@ window.SideBar {
   // --- App Shortcuts ---
   .shortcut-btn {
     all: unset;
-    color: rgba(white, 0.6);
+    color: rgba($text, 0.6);
     padding: 8px 0;
     margin: 2px; // Add some margin for the active indicator to look good
     border-radius: 6px;
@@ -29,7 +28,7 @@ window.SideBar {
     }
 
     &:hover {
-      color: white;
+      color: $text;
       text-shadow: 0 0 10px rgba($mauve, 0.6);
       background: rgba($surface1, 0.3);
     }
@@ -41,6 +40,12 @@ window.SideBar {
     }
   }
 
+  .shortcut-btn.running {
+    color: rgba($text, 0.9);
+    border-left-color: rgba($surface1, 0.8);
+  }
+
+  // --- Media Visualizer ---
   .media-visualizer {
     padding: 4px;
     margin-left: 3px;
@@ -63,7 +68,7 @@ window.SideBar {
     .media-title {
       font-family: "JetBrainsMono Nerd Font", monospace;
       font-size: 1px;
-      color: rgba(white, 0.8);
+      color: rgba($text, 0.8);
       transform: rotate(90deg) scale(12);
       transform-origin: center center;
       margin-right: 5px;
@@ -71,12 +76,12 @@ window.SideBar {
 
     button {
       all: unset;
-      color: rgba(white, 0.6);
+      color: rgba($text, 0.6);
       padding: 2px;
       transition: color 0.2s ease;
 
       &:hover {
-        color: white;
+        color: $text;
       }
 
       image {
@@ -90,4 +95,8 @@ window.SideBar {
     padding-top: 10px;
   }
 
+  .system-zone {
+    border-top: 1px solid rgba($surface1, 0.3);
+    padding-top: 10px;
+  }
 }

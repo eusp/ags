@@ -1,7 +1,10 @@
 import { Gtk } from "ags/gtk4"
 import Hyprland from "gi://AstalHyprland"
+import Apps from "gi://AstalApps"
+import { MenuPopover, MenuItem, MenuSection } from "../Shared/MenuPopover"
 
 const hyprland = Hyprland.get_default()
+const apps = new Apps.Apps()
 
 const DEFAULT_APPS = [
     { icon: "utilities-terminal-symbolic", command: "ptyxis", tooltip: "Terminal", matches: "ptyxis" },
@@ -22,6 +25,73 @@ function launchDetached(command: string) {
     } catch (e) {
         logError(e);
     }
+}
+
+function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo?: any) {
+    const sections: MenuSection[] = []
+
+    // 1. Dynamic Desktop Actions (Jump Lists)
+    const match = appInfo?.matches || client?.class?.toLowerCase() || ""
+    const desktopApp = apps.list.find(a =>
+        (a.wm_class?.toLowerCase() || "").includes(match) ||
+        (a.id?.toLowerCase() || "").includes(match) ||
+        (a.name?.toLowerCase() || "").includes(match)
+    )
+
+    if (desktopApp) {
+        // @ts-ignore
+        const actions = desktopApp.app_actions || desktopApp.actions || []
+        if (actions.length > 0) {
+            sections.push({
+                title: desktopApp.name,
+                items: actions.map((a: any) => ({
+                    label: a.name,
+                    icon: "system-run-symbolic",
+                    onClick: () => desktopApp.launch_action(a.action_id)
+                }))
+            })
+        }
+    }
+
+    // 2. Window Management
+    const windowItems: MenuItem[] = []
+
+    if (appInfo) {
+        windowItems.push({
+            label: "Nueva ventana",
+            icon: "window-new-symbolic",
+            onClick: () => launchDetached(appInfo.command)
+        })
+    }
+
+    if (client) {
+        const addr = client.address.startsWith("0x") ? client.address : `0x${client.address}`
+
+        windowItems.push({
+            label: "Minimizar",
+            icon: "window-minimize-symbolic",
+            onClick: () => hyprland.dispatch("movetoworkspacesilent", `special:minimized,address:${addr}`)
+        })
+
+        windowItems.push({
+            label: "Flotante",
+            icon: "window-pop-out-symbolic",
+            onClick: () => hyprland.dispatch("togglefloating", `address:${addr}`)
+        })
+
+        windowItems.push({
+            label: "Cerrar",
+            icon: "window-close-symbolic",
+            onClick: () => hyprland.dispatch("closewindow", `address:${addr}`),
+            isDangerous: true
+        })
+    }
+
+    if (windowItems.length > 0) {
+        sections.push({ items: windowItems })
+    }
+
+    return MenuPopover(widget, sections, Gtk.PositionType.RIGHT)
 }
 
 export default function AppList() {
@@ -54,10 +124,15 @@ export default function AppList() {
                 const runningClient = clients.find(c => (c.class?.toLowerCase() || "").includes(app.matches))
                 // Logic: if ANY client matching the app is focused, it's active.
                 const isFocused = focused && (focused.class?.toLowerCase() || "").includes(app.matches)
+                const isRunning = !!runningClient
 
                 const btn = new Gtk.Button({ tooltipText: app.tooltip })
                 btn.add_css_class("shortcut-btn")
-                if (isFocused) btn.add_css_class("active")
+                if (isFocused) {
+                    btn.add_css_class("active")
+                } else if (isRunning) {
+                    btn.add_css_class("running")
+                }
 
                 btn.set_child(new Gtk.Image({ iconName: app.icon }))
 
@@ -88,6 +163,14 @@ export default function AppList() {
                         existing.focus()
                     }
                 })
+
+                // Context Menu
+                const popover = createContextMenu(btn, runningClient, app) 
+                const gesture = new Gtk.GestureClick({ button: 3 })
+                gesture.connect("released", () => {
+                    popover.popup()
+                })
+                btn.add_controller(gesture)
 
                 container.append(btn)
             })
@@ -130,6 +213,14 @@ export default function AppList() {
                         client.focus()
                     }
                 })
+
+                // Context Menu
+                const popover = createContextMenu(btn, client)
+                const gesture = new Gtk.GestureClick({ button: 3 })
+                gesture.connect("released", () => {
+                    popover.popup()
+                })
+                btn.add_controller(gesture)
 
                 container.append(btn)
             })
