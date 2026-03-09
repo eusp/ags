@@ -7,8 +7,8 @@ window.RightMenu {
   background: transparent;
 
   .rightmenu-container {
-    background-color: $crust;
-    border-left: 2px solid rgba($text, 0.3);
+    background-color: $base;
+    border-left: 2px solid rgba($blue, 0.4);
     padding: 12px;
     min-width: 320px;
   }
@@ -84,7 +84,7 @@ window.RightMenu {
       }
 
       highlight {
-        background: rgba($text, 0.5);
+        background: rgba($blue, 0.6);
         border-radius: 100px;
       }
 
@@ -92,7 +92,7 @@ window.RightMenu {
         min-height: 6px;
         min-width: 6px;
         margin: -2px;
-        background: $text;
+        background: $blue;
         border-radius: 100px;
       }
     }

@@ -1,6 +1,7 @@
 import { Gtk } from "ags/gtk4"
 import Hyprland from "gi://AstalHyprland"
 import Apps from "gi://AstalApps"
+import Gio from "gi://Gio"
 import { MenuPopover, MenuItem, MenuSection } from "../Shared/MenuPopover"
 
 const hyprland = Hyprland.get_default()
@@ -32,22 +33,57 @@ function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo
 
     // 1. Dynamic Desktop Actions (Jump Lists)
     const match = appInfo?.matches || client?.class?.toLowerCase() || ""
-    const desktopApp = apps.list.find(a =>
-        (a.wm_class?.toLowerCase() || "").includes(match) ||
-        (a.id?.toLowerCase() || "").includes(match) ||
-        (a.name?.toLowerCase() || "").includes(match)
-    )
+
+    // Attempt to find the best DesktopAppInfo
+    let desktopApp: Gio.DesktopAppInfo | null = null
+
+    // Helper to log or search
+    const tryGetAppInfo = (id: string) => {
+        if (!id) return null
+        // Try exact, then .desktop, then common prefixes
+        return Gio.DesktopAppInfo.new(id) ||
+            Gio.DesktopAppInfo.new(id + ".desktop") ||
+            Gio.DesktopAppInfo.new("org.mozilla." + id) ||
+            Gio.DesktopAppInfo.new("org.gnome." + (id === "nautilus" ? "Nautilus" : id))
+    }
+
+    // Try finding via Astal and getting its ID
+    const astalApp = apps.list.find(a => {
+        const id = (a.id || "").toLowerCase()
+        const wm = (a.wm_class || "").toLowerCase()
+        const name = (a.name || "").toLowerCase()
+        return id.includes(match) || wm.includes(match) || name.includes(match)
+    })
+
+    if (astalApp?.id) {
+        desktopApp = Gio.DesktopAppInfo.new(astalApp.id)
+    }
+
+    // If still not found, search Gio directly with the match string
+    if (!desktopApp) {
+        desktopApp = tryGetAppInfo(match)
+    }
+
+    // Last resort: search through all app infos
+    if (!desktopApp) {
+        const allApps = Gio.AppInfo.get_all()
+        desktopApp = allApps.find(a =>
+            (a.get_id() || "").toLowerCase().includes(match) ||
+            (a.get_name() || "").toLowerCase().includes(match) ||
+            (a.get_executable() || "").toLowerCase().includes(match)
+        ) as Gio.DesktopAppInfo
+    }
 
     if (desktopApp) {
         // @ts-ignore
-        const actions = desktopApp.app_actions || desktopApp.actions || []
+        const actions = desktopApp.list_actions ? desktopApp.list_actions() : []
         if (actions.length > 0) {
             sections.push({
-                title: desktopApp.name,
-                items: actions.map((a: any) => ({
-                    label: a.name,
+                title: desktopApp.get_display_name(),
+                items: actions.map(name => ({
+                    label: desktopApp?.get_action_name(name) || name,
                     icon: "system-run-symbolic",
-                    onClick: () => desktopApp.launch_action(a.action_id)
+                    onClick: () => (desktopApp as any).launch_action(name, null)
                 }))
             })
         }
@@ -88,10 +124,25 @@ function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo
     }
 
     if (windowItems.length > 0) {
-        sections.push({ items: windowItems })
+        // Deduplicate "Nueva ventana" if already provided by desktop actions
+        const existingLabels = sections.flatMap(s => s.items || []).map(i => i.label.toLowerCase())
+        const hasNewWindow = existingLabels.some(l =>
+            (l.includes("nueva") && l.includes("ventana")) ||
+            (l.includes("new") && l.includes("window"))
+        )
+
+        const filteredWindowItems = hasNewWindow
+            ? windowItems.filter(i => i.label !== "Nueva ventana")
+            : windowItems
+
+        if (filteredWindowItems.length > 0) {
+            sections.push({ items: filteredWindowItems })
+        }
     }
 
-    return MenuPopover(widget, sections, Gtk.PositionType.RIGHT)
+    const popover = MenuPopover(widget, sections, Gtk.PositionType.RIGHT)
+    popover.set_parent(widget)
+    return popover
 }
 
 export default function AppList() {
@@ -165,7 +216,7 @@ export default function AppList() {
                 })
 
                 // Context Menu
-                const popover = createContextMenu(btn, runningClient, app) 
+                const popover = createContextMenu(btn, runningClient, app)
                 const gesture = new Gtk.GestureClick({ button: 3 })
                 gesture.connect("released", () => {
                     popover.popup()

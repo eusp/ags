@@ -15,9 +15,9 @@ export interface MenuSection {
 
 export function MenuPopover(parent: Gtk.Widget, sections: MenuSection[], position: Gtk.PositionType = Gtk.PositionType.BOTTOM) {
     const popover = new Gtk.Popover({
-        cssClasses: ["shared-popover"]
+        cssClasses: ["shared-popover"],
+        hasArrow: false,
     })
-    popover.set_parent(parent)
     popover.set_position(position)
 
     const mainBox = new Gtk.Box({
@@ -34,8 +34,12 @@ export function MenuPopover(parent: Gtk.Widget, sections: MenuSection[], positio
         if (section.title) {
             mainBox.append(new Gtk.Label({
                 label: section.title,
-                xalign: 0,
+                xalign: 0.5,
                 cssClasses: ["popover-section-title"]
+            }))
+            mainBox.append(new Gtk.Separator({
+                orientation: Gtk.Orientation.HORIZONTAL,
+                cssClasses: ["popover-separator"]
             }))
         }
 
@@ -68,7 +72,6 @@ export function MenuPopover(parent: Gtk.Widget, sections: MenuSection[], positio
         } else if (section.customChild) {
             const oldParent = section.customChild.get_parent()
             if (oldParent && oldParent !== mainBox) {
-                // Remove from previous parent to avoid Gtk-CRITICAL
                 if (oldParent instanceof Gtk.Box) {
                     oldParent.remove(section.customChild)
                 } else if ("set_child" in oldParent) {
@@ -87,7 +90,6 @@ export function MenuPopover(parent: Gtk.Widget, sections: MenuSection[], positio
         }
     })
 
-    // Cleanup: Avoid Gtk-WARNING by unparenting on parent destroy
     parent.connect("destroy", () => {
         if (!popover.is_finalized && popover.get_parent() === parent) {
             popover.set_parent(null!)

@@ -7,10 +7,10 @@ window.SideBar {
   background: transparent;
 
   .sidebar-container {
-    background-color: $crust;
+    background-color: $base;
     padding: 12px 0px;
     min-width: 38px;
-    border-right: 2px solid rgba($text, 0.3);
+    border-right: 2px solid rgba($blue, 0.4);
   }
 
   // --- App Shortcuts ---
@@ -29,20 +29,26 @@ window.SideBar {
 
     &:hover {
       color: $text;
-      text-shadow: 0 0 10px rgba($mauve, 0.6);
-      background: rgba($surface1, 0.3);
+      text-shadow: 0 0 10px rgba($blue, 0.6);
+      background: rgba($blue, 0.1);
     }
 
     &.active {
       color: $text;
-      border-left-color: $text;
-      background: rgba($text, 0.1);
+      border-left-color: $blue;
+      background: rgba($blue, 0.15);
     }
   }
 
   .shortcut-btn.running {
-    color: rgba($text, 0.9);
-    border-left-color: rgba($surface1, 0.8);
+    color: rgba($text, 0.6);
+    border-left-color: rgba($text, 0.2);
+
+    &:hover {
+      color: $text;
+      text-shadow: 0 0 10px rgba($blue, 0.6);
+      background: rgba($blue, 0.1);
+    }
   }
 
   // --- Media Visualizer ---

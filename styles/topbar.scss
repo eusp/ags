@@ -7,10 +7,10 @@ window.TopBar {
   background: transparent;
 
   .bar-content {
-    background-color: $crust;
+    background-color: $base;
     min-height: 30px;
     padding: 0px 16px;
-    border-bottom: 2px solid rgba($text, 0.3);
+    border-bottom: 2px solid rgba($blue, 0.4);
   }
 
   // --- Workspaces (círculos) ---
@@ -27,8 +27,8 @@ window.TopBar {
       }
 
       &.active {
-        background: $text;
-        box-shadow: 0 0 6px rgba($text, 0.6);
+        background: $blue;
+        box-shadow: 0 0 6px rgba($blue, 0.6);
       }
 
       &:hover {

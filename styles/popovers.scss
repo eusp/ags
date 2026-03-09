@@ -7,24 +7,23 @@
 popover {
   border-radius: 12px;
   background-color: transparent; // Managed by .shared-popover container
+  padding: 0px;
 
   contents {
-    background-color: rgba($crust, 0.95);
-    border: 1px solid rgba($mauve, 0.3);
+    background-color: rgba($base, 0.98);
+    border: 2px solid rgba($blue, 0.4);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    padding: 4px;
+    padding: 0px;
   }
 }
 
 .shared-popover {
   .popover-section-title {
-    color: $overlay1;
+    color: $text;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin: 8px 12px 4px 12px;
   }
 
   .popover-item {
@@ -33,11 +32,10 @@ popover {
     border-radius: 8px;
     color: rgba($text, 0.9);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin: 1px 0;
 
     image {
       font-size: 16px;
-      color: $mauve;
+      color: $blue;
     }
 
     label {
@@ -47,7 +45,7 @@ popover {
     }
 
     &:hover {
-      background-color: rgba($mauve, 0.12);
+      background-color: rgba($blue, 0.12);
       color: $blue;
 
       image {
@@ -72,9 +70,10 @@ popover {
   }
 
   .popover-separator {
-    background-color: rgba($surface1, 0.4);
-    margin: 6px 10px;
-    min-height: 1px;
+    background-color: $surface1;
+    min-height: 2px;
+    margin-top: 3px;
+    margin-bottom: 3px;
   }
 }
 
