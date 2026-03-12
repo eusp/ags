@@ -13,12 +13,13 @@ export interface MenuSection {
     customChild?: Gtk.Widget
 }
 
-export function MenuPopover(parent: Gtk.Widget, sections: MenuSection[], position: Gtk.PositionType = Gtk.PositionType.BOTTOM) {
+export function MenuPopover(parent: Gtk.Widget | null, sections: MenuSection[], position: Gtk.PositionType = Gtk.PositionType.BOTTOM) {
     const popover = new Gtk.Popover({
         cssClasses: ["shared-popover"],
         hasArrow: false,
     })
     popover.set_position(position)
+    if (parent) popover.set_parent(parent)
 
     const mainBox = new Gtk.Box({
         orientation: Gtk.Orientation.VERTICAL,
@@ -90,11 +91,14 @@ export function MenuPopover(parent: Gtk.Widget, sections: MenuSection[], positio
         }
     })
 
-    parent.connect("destroy", () => {
-        if (!popover.is_finalized && popover.get_parent() === parent) {
-            popover.set_parent(null!)
-        }
-    })
+    // Cleanup: Avoid Gtk-WARNING by unparenting on parent destroy
+    if (parent) {
+        parent.connect("destroy", () => {
+            if (!popover.is_finalized && popover.get_parent() === parent) {
+                popover.set_parent(null!)
+            }
+        })
+    }
 
     return popover
 }

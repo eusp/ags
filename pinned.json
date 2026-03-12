@@ -1,0 +1,20 @@
+{
+  "menu": [
+    "LmStudio.desktop",
+    "Windsurf.desktop",
+    "steam.desktop",
+    "Wuthering Waves.desktop",
+    "The Honkers Railway Launcher.desktop",
+    "TLauncher.desktop",
+    "No Man's Sky.desktop",
+    "Waydroid.desktop",
+    "rustdesk.desktop",
+    "PvZ2-Gardenless.desktop"
+  ],
+  "sidebar": [
+    "ptyxis.desktop",
+    "org.gnome.Nautilus.desktop",
+    "firefox.desktop",
+    "steam.desktop"
+  ]
+}

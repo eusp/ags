@@ -22,7 +22,7 @@ export default function Volume() {
     ) as Gtk.Scale
 
     // Create the popover ONCE
-    const popover = MenuPopover(menubutton, [
+    const popover = MenuPopover(null, [
         {
             title: "Volumen",
             customChild: slider

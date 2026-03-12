@@ -62,7 +62,7 @@ export default function SystemMonitor() {
     statsBox.append(memRow)
 
     // Create the popover ONCE
-    const popover = MenuPopover(menubutton, [
+    const popover = MenuPopover(null, [
         {
             title: "Rendimiento",
             customChild: statsBox

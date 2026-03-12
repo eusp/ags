@@ -84,13 +84,14 @@ En la parte superior: **Configuración Rápida**
  - Botones de acceso rápido: Internet (toggle Wi-Fi), Bluetooth (toggle), Sonido (mute/unmute), Música (abre reproductor)
  - Panel de notificaciones con lista de notificaciones recientes y botón de limpiar
 
-En la parte central: **Aplicaciones Recientes**
- - Lista de aplicaciones usadas recientemente con iconos y nombres
- - Click para lanzar la aplicación correspondiente
+En la parte central: **Aplicaciones Ancladas**
+ - Sección dedicada a aplicaciones fijas por el usuario
+ - Persistencia real mediante `~/.config/ags/pinned.json`
+ - Actualización reactiva al anclar/desanclar desde cualquier menú
 
 En la parte media-central: **Buscador de Aplicaciones**
  - Campo de búsqueda con filtrado en tiempo real
- - Resultados de búsqueda con iconos de aplicaciones
+ - Resultados de búsqueda con iconos de aplicaciones y **menú contextual (clic derecho)**
  - Autocompletado y lanzamiento rápido
 
 En la parte inferior: **Acciones del Sistema**
@@ -109,6 +110,8 @@ Colores consistentes con el resto del sistema.
 .
 ├── app.ts                 # Punto de entrada principal de la configuración de AGS
 ├── style.scss             # Archivo principal de estilos (importa el resto)
+├── lib/                   # Librerías y servicios de estado
+│   └── pins.ts            # Servicio GObject para persistencia de aplicaciones ancladas
 ├── styles/                # Carpeta de estilos modularizados (SCSS)
 │   ├── colors.scss        # Paleta de colores (Mauve, Peach, etc.)
 │   ├── global.scss        # Estilos base y variables
@@ -123,7 +126,6 @@ Colores consistentes con el resto del sistema.
 │   ├── TopBar/            # Widgets de la barra superior
 │   │   ├── Volume.tsx
 │   │   ├── Network.tsx
-│   │   └── ...
 │   ├── RightMenu/         # Widgets del menú lateral derecho
 │   └── ...
 ├── README.md              # Documentación técnica y de uso

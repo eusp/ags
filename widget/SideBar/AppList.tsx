@@ -3,28 +3,29 @@ import Hyprland from "gi://AstalHyprland"
 import Apps from "gi://AstalApps"
 import Gio from "gi://Gio"
 import { MenuPopover, MenuItem, MenuSection } from "../Shared/MenuPopover"
+import pins from "../../lib/pins"
 
 const hyprland = Hyprland.get_default()
 const apps = new Apps.Apps()
 
 const DEFAULT_APPS = [
-    { icon: "utilities-terminal-symbolic", command: "ptyxis", tooltip: "Terminal", matches: "ptyxis" },
-    { icon: "folder-symbolic", command: "nautilus", tooltip: "Nautilus", matches: "nautilus" },
-    { icon: "firefox-symbolic", command: "firefox", tooltip: "Firefox", matches: "firefox" },
-    { icon: "antigravity-symbolic", command: "antigravity", tooltip: "Antigravity", matches: "antigravity" },
-    { icon: "steam-symbolic", command: "steam", tooltip: "Steam", matches: "steam" },
+    { icon: "utilities-terminal-symbolic", command: "ptyxis", tooltip: "Terminal", matches: "ptyxis", id: "ptyxis.desktop" },
+    { icon: "folder-symbolic", command: "nautilus", tooltip: "Nautilus", matches: "nautilus", id: "org.gnome.Nautilus.desktop" },
+    { icon: "firefox-symbolic", command: "firefox", tooltip: "Firefox", matches: "firefox", id: "firefox.desktop" },
+    { icon: "antigravity-symbolic", command: "antigravity", tooltip: "Antigravity", matches: "antigravity", id: "antigravity.desktop" },
+    { icon: "steam-symbolic", command: "steam", tooltip: "Steam", matches: "steam", id: "steam.desktop" },
 ]
 
 function launchDetached(command: string) {
     const { Gio } = imports.gi;
 
     try {
-        // Crea y ejecuta el proceso sin pasar flags
         new Gio.Subprocess({
             argv: [command],
         }).init(null);
     } catch (e) {
-        logError(e);
+        // @ts-ignore
+        if (typeof print !== 'undefined') print(e);
     }
 }
 
@@ -40,11 +41,13 @@ function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo
     // Helper to log or search
     const tryGetAppInfo = (id: string) => {
         if (!id) return null
+        // @ts-ignore
+        const DesktopAppInfo = (imports.gi.GioUnix ? imports.gi.GioUnix.DesktopAppInfo : Gio.DesktopAppInfo)
         // Try exact, then .desktop, then common prefixes
-        return Gio.DesktopAppInfo.new(id) ||
-            Gio.DesktopAppInfo.new(id + ".desktop") ||
-            Gio.DesktopAppInfo.new("org.mozilla." + id) ||
-            Gio.DesktopAppInfo.new("org.gnome." + (id === "nautilus" ? "Nautilus" : id))
+        return DesktopAppInfo.new(id) ||
+            DesktopAppInfo.new(id + ".desktop") ||
+            DesktopAppInfo.new("org.mozilla." + id) ||
+            DesktopAppInfo.new("org.gnome." + (id === "nautilus" ? "Nautilus" : id))
     }
 
     // Try finding via Astal and getting its ID
@@ -56,7 +59,9 @@ function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo
     })
 
     if (astalApp?.id) {
-        desktopApp = Gio.DesktopAppInfo.new(astalApp.id)
+        // @ts-ignore
+        const DesktopAppInfo = (imports.gi.GioUnix ? imports.gi.GioUnix.DesktopAppInfo : Gio.DesktopAppInfo)
+        desktopApp = DesktopAppInfo.new(astalApp.id)
     }
 
     // If still not found, search Gio directly with the match string
@@ -83,7 +88,10 @@ function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo
                 items: actions.map(name => ({
                     label: desktopApp?.get_action_name(name) || name,
                     icon: "system-run-symbolic",
-                    onClick: () => (desktopApp as any).launch_action(name, null)
+                    onClick: () => {
+                        // @ts-ignore
+                        if (desktopApp?.launch_action) desktopApp.launch_action(name, null)
+                    }
                 }))
             })
         }
@@ -123,6 +131,26 @@ function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo
         })
     }
 
+    // 3. Pinning Options
+    const pinningItems: MenuItem[] = []
+    const appId = desktopApp?.get_id() || astalApp?.id || (appInfo?.id) || ""
+    const isPinnedMenu = pins.isPinnedMenu(appId)
+    const isPinnedSidebar = pins.isPinnedSidebar(appId)
+
+    pinningItems.push({
+        label: isPinnedMenu ? "Desanclar del menú" : "Anclar al menú",
+        icon: isPinnedMenu ? "bookmark-remove-symbolic" : "bookmark-new-symbolic",
+        onClick: () => pins.toggleMenu(appId)
+    })
+
+    pinningItems.push({
+        label: isPinnedSidebar ? "Desanclar del sidebar" : "Anclar al sidebar",
+        icon: isPinnedSidebar ? "pin-symbolic" : "bookmark-new-symbolic",
+        onClick: () => pins.toggleSidebar(appId)
+    })
+
+    sections.push({ items: pinningItems })
+
     if (windowItems.length > 0) {
         // Deduplicate "Nueva ventana" if already provided by desktop actions
         const existingLabels = sections.flatMap(s => s.items || []).map(i => i.label.toLowerCase())
@@ -140,9 +168,7 @@ function createContextMenu(widget: Gtk.Widget, client?: Hyprland.Client, appInfo
         }
     }
 
-    const popover = MenuPopover(widget, sections, Gtk.PositionType.RIGHT)
-    popover.set_parent(widget)
-    return popover
+    return MenuPopover(widget, sections, Gtk.PositionType.RIGHT)
 }
 
 export default function AppList() {
@@ -157,11 +183,6 @@ export default function AppList() {
         // Wrap in idle_add to avoid "out of tracking context" errors during signal callbacks
         const { GLib } = imports.gi;
         GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
-            // Check if container still exists/is valid before updating
-            // simple check: if it has no native object (destroyed), stop.
-            // But here it's a JS object wrapping GObject.
-            // We can check if it's mapped or just try catch, but usually safe in idle if shorter than destroy.
-
             // Clear existing children
             while (container.get_first_child()) {
                 container.remove(container.get_first_child()!)
@@ -170,10 +191,31 @@ export default function AppList() {
             const clients = hyprland.clients
             const focused = hyprland.focusedClient
 
-            // 1. Default Apps
-            DEFAULT_APPS.forEach(app => {
+            // 1. Pinned Apps
+            const currentSidebarPins = pins.getSidebar()
+            const allPinned = [...DEFAULT_APPS]
+            
+            // Add other pinned apps from service
+            currentSidebarPins.forEach(id => {
+                if (!allPinned.some(a => a.id === id)) {
+                    // Try to find app info
+                    // @ts-ignore
+                    const DesktopAppInfo = (imports.gi.GioUnix ? imports.gi.GioUnix.DesktopAppInfo : Gio.DesktopAppInfo)
+                    const di = DesktopAppInfo.new(id)
+                    if (di) {
+                        allPinned.push({
+                            icon: di.get_icon()?.to_string() || "system-run-symbolic",
+                            command: di.get_executable() || "",
+                            tooltip: di.get_display_name() || id,
+                            matches: id.split(".")[0].toLowerCase(),
+                            id: id
+                        })
+                    }
+                }
+            })
+
+            allPinned.forEach(app => {
                 const runningClient = clients.find(c => (c.class?.toLowerCase() || "").includes(app.matches))
-                // Logic: if ANY client matching the app is focused, it's active.
                 const isFocused = focused && (focused.class?.toLowerCase() || "").includes(app.matches)
                 const isRunning = !!runningClient
 
@@ -185,7 +227,10 @@ export default function AppList() {
                     btn.add_css_class("running")
                 }
 
-                btn.set_child(new Gtk.Image({ iconName: app.icon }))
+                const icon = app.icon.includes("/") 
+                    ? new Gtk.Image({ file: app.icon, pixelSize: 24 })
+                    : new Gtk.Image({ iconName: app.icon })
+                btn.set_child(icon)
 
                 btn.connect("clicked", () => {
                     const clients = hyprland.clients
@@ -215,10 +260,13 @@ export default function AppList() {
                     }
                 })
 
-                // Context Menu
-                const popover = createContextMenu(btn, runningClient, app)
+                // Context Menu (Lazy Loaded)
+                let popover: any = null
                 const gesture = new Gtk.GestureClick({ button: 3 })
                 gesture.connect("released", () => {
+                    if (!popover) {
+                        popover = createContextMenu(btn, runningClient, app)
+                    }
                     popover.popup()
                 })
                 btn.add_controller(gesture)
@@ -228,7 +276,7 @@ export default function AppList() {
 
             // 2. Dynamic Running Apps
             clients.forEach(client => {
-                const isDefault = DEFAULT_APPS.some(a => (client.class?.toLowerCase() || "").includes(a.matches))
+                const isDefault = allPinned.some(a => (client.class?.toLowerCase() || "").includes(a.matches))
                 if (isDefault) return
 
                 const isMinimized = client.workspace && (client.workspace.name || "").includes("minimized")
@@ -265,10 +313,13 @@ export default function AppList() {
                     }
                 })
 
-                // Context Menu
-                const popover = createContextMenu(btn, client)
+                // Context Menu (Lazy Loaded)
+                let popover: any = null
                 const gesture = new Gtk.GestureClick({ button: 3 })
                 gesture.connect("released", () => {
+                    if (!popover) {
+                        popover = createContextMenu(btn, client)
+                    }
                     popover.popup()
                 })
                 btn.add_controller(gesture)
@@ -283,6 +334,7 @@ export default function AppList() {
     // Connect signals
     hyprland.connect("notify::clients", update)
     hyprland.connect("notify::focused-client", update)
+    pins.connect("sidebar-changed", update)
 
     // Initial update
     update()

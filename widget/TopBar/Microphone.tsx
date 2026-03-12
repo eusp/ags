@@ -28,7 +28,7 @@ export default function Microphone() {
         slider.value = mic.volume
 
         if (!menubutton.get_popover()) {
-            const popover = MenuPopover(menubutton, [
+            const popover = MenuPopover(null, [
                 {
                     title: "Micrófono",
                     customChild: slider

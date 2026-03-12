@@ -3,13 +3,9 @@ import { execAsync } from "ags/process"
 
 export default function PowerActions() {
     const logout = () => {
-        execAsync("gnome-session-quit --logout").catch(() => {
+        execAsync("hyprctl dispatch exit").catch(() => {
             execAsync("pkill -u $USER").catch(() => { })
         })
-    }
-
-    const suspend = () => {
-        execAsync("systemctl suspend").catch(() => { })
     }
 
     const reboot = () => {
@@ -34,15 +30,6 @@ export default function PowerActions() {
                 tooltipText="Cerrar Sesión"
             >
                 <image iconName="system-log-out-symbolic" />
-            </button>
-
-            <button
-                cssClasses={["power-button", "suspend-button"]}
-                onClicked={suspend}
-                hexpand={true}
-                tooltipText="Suspender"
-            >
-                <image iconName="system-suspend-symbolic" />
             </button>
 
             <button

@@ -56,7 +56,7 @@ export default function BluetoothIndicator() {
 
         // Create the popover ONCE or only when strictly necessary
         if (!menubutton.get_popover()) {
-            const popover = MenuPopover(menubutton, [
+            const popover = MenuPopover(null, [
                 {
                     title: "Bluetooth",
                     items: [{

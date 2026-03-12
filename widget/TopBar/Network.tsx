@@ -35,7 +35,7 @@ export default function NetworkIndicator() {
         // Actually, let's create it once with the initial state and just update the icon/label if we can.
         // But MenuPopover creates widgets. Let's just make it call it once.
         if (!menubutton.get_popover()) {
-            const popover = MenuPopover(menubutton, [
+            const popover = MenuPopover(null, [
                 {
                     items: [{
                         label: labelText,

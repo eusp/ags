@@ -14,7 +14,7 @@ export default function Clipboard() {
     menubutton.set_child(new Gtk.Image({ iconName: "edit-copy-symbolic" }))
 
     // Create the popover ONCE
-    const popover = MenuPopover(menubutton, [
+    const popover = MenuPopover(null, [
         {
             title: "Portapapeles",
             customChild: scrolled

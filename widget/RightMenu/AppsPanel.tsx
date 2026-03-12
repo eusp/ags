@@ -1,21 +1,127 @@
 import { Gtk } from "ags/gtk4"
 import { execAsync } from "ags/process"
+import Hyprland from "gi://AstalHyprland"
+import Apps from "gi://AstalApps"
+import { MenuPopover, MenuItem, MenuSection } from "../Shared/MenuPopover"
+import pins from "../../lib/pins"
 
 declare const imports: any
 
 const { Gio, GLib } = imports.gi
 const ByteArray = imports.byteArray
 
-const PINNED_DESKTOP_IDS = [
-    "LmStudio.desktop",
-    "Windsurf.desktop",
-    "steam.desktop",
-    "Wuthering Waves.desktop",
-    "The Honkers Railway Launcher.desktop",
-    "TLauncher.desktop",
-    "No Man's Sky.desktop",
-    "Waydroid.desktop",
-]
+const hyprland = Hyprland.get_default()
+const apps = new Apps.Apps()
+
+function launchDetached(command: string) {
+    const { Gio } = imports.gi;
+    try {
+        new Gio.Subprocess({
+            argv: [command],
+        }).init(null);
+    } catch (e) {
+        // @ts-ignore
+        if (typeof print !== 'undefined') print(e);
+    }
+}
+
+function tryGetAppInfo(id: string) {
+    if (!id) return null
+    // @ts-ignore
+    const DesktopAppInfo = (imports.gi.GioUnix ? imports.gi.GioUnix.DesktopAppInfo : Gio.DesktopAppInfo)
+    const di = DesktopAppInfo.new(id) ||
+        DesktopAppInfo.new(id + ".desktop") ||
+        DesktopAppInfo.new("org.mozilla." + id) ||
+        DesktopAppInfo.new("org.gnome." + (id === "nautilus" ? "Nautilus" : id))
+    return di
+}
+
+function createContextMenu(widget: Gtk.Widget, appInfo: any) {
+    const sections: MenuSection[] = []
+    const appId = appInfo.get_id ? appInfo.get_id() : ""
+    const desktopAppInfo = tryGetAppInfo(appId)
+
+    // 1. Desktop Actions (Jump Lists)
+    if (desktopAppInfo) {
+        // @ts-ignore
+        const actions = desktopAppInfo.list_actions ? desktopAppInfo.list_actions() : []
+        if (actions.length > 0) {
+            sections.push({
+                title: desktopAppInfo.get_display_name(),
+                items: actions.map((name: any) => ({
+                    label: (desktopAppInfo as any).get_action_name(name) || name,
+                    icon: "system-run-symbolic",
+                    onClick: () => {
+                        // @ts-ignore
+                        if (desktopAppInfo.launch_action) desktopAppInfo.launch_action(name, null)
+                    }
+                }))
+            })
+        }
+    }
+
+    // 2. Pinning Options
+    const pinningItems: MenuItem[] = []
+    const isPinnedMenu = pins.isPinnedMenu(appId)
+    const isPinnedSidebar = pins.isPinnedSidebar(appId)
+
+    pinningItems.push({
+        label: isPinnedMenu ? "Desanclar del menú" : "Anclar al menú",
+        icon: isPinnedMenu ? "bookmark-remove-symbolic" : "bookmark-new-symbolic",
+        onClick: () => pins.toggleMenu(appId)
+    })
+
+    pinningItems.push({
+        label: isPinnedSidebar ? "Desanclar del sidebar" : "Anclar al sidebar",
+        icon: isPinnedSidebar ? "pin-symbolic" : "bookmark-new-symbolic",
+        onClick: () => pins.toggleSidebar(appId)
+    })
+
+    sections.push({ items: pinningItems })
+
+    // 3. Window Management
+    const desktopApp = apps.list.find((a: any) => a.id === appId)
+    const match = desktopApp?.wm_class?.toLowerCase() || desktopApp?.name?.toLowerCase() || appId.split(".")[0]
+    const client = hyprland.clients.find((c: any) => (c.class?.toLowerCase() || "").includes(match))
+
+    const windowItems: MenuItem[] = []
+
+    windowItems.push({
+        label: "Nueva ventana",
+        icon: "window-new-symbolic",
+        onClick: () => {
+            const cmd = appInfo.get_executable ? appInfo.get_executable() : null
+            if (cmd) launchDetached(cmd)
+        }
+    })
+
+    if (client) {
+        const addr = client.address.startsWith("0x") ? client.address : `0x${client.address}`
+
+        windowItems.push({
+            label: "Minimizar",
+            icon: "window-minimize-symbolic",
+            onClick: () => hyprland.dispatch("movetoworkspacesilent", `special:minimized,address:${addr}`)
+        })
+
+        windowItems.push({
+            label: "Flotante",
+            icon: "window-pop-out-symbolic",
+            onClick: () => hyprland.dispatch("togglefloating", `address:${addr}`)
+        })
+
+        windowItems.push({
+            label: "Cerrar",
+            icon: "window-close-symbolic",
+            onClick: () => hyprland.dispatch("closewindow", `address:${addr}`),
+            isDangerous: true
+        })
+    }
+
+    sections.push({ items: windowItems })
+
+    return MenuPopover(widget, sections, Gtk.PositionType.LEFT)
+}
 
 export default function AppsPanel() {
     const allInstalledApps: any[] = (Gio.AppInfo.get_all() || [])
@@ -32,99 +138,10 @@ export default function AppsPanel() {
             appInfo.launch([], null)
         } catch {
             const cmd = appInfo.get_executable ? appInfo.get_executable() : null
-            if (cmd) execAsync(cmd).catch(() => {})
+            if (cmd) execAsync(cmd).catch(() => { })
         }
     }
 
-    const pinnedApps: any[] = PINNED_DESKTOP_IDS
-        .map((id) => findById(id))
-        .filter(Boolean)
-
-    const root = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        spacing: 8,
-        cssClasses: ["apps-panel"],
-    })
-
-    const searchEntry = new Gtk.Entry({
-        placeholderText: "Buscar aplicaciones...",
-        cssClasses: ["app-search"],
-        hexpand: true,
-    })
-
-    // Expose search entry for external focus management
-    root.searchEntry = searchEntry
-
-    let isShowingAll = false
-    let firstHighlightedApp: any = null
-
-    // Handle Enter key to launch first highlighted app
-    searchEntry.connect("activate", () => {
-        if (firstHighlightedApp) {
-            launchApp(firstHighlightedApp)
-        }
-    })
-
-    const menuButton = new Gtk.Button({
-        cssClasses: ["menu-button"],
-    })
-    
-    const gridIcon = new Gtk.Image({
-        icon_name: "view-grid-symbolic",
-        pixelSize: 16,
-    })
-    menuButton.set_child(gridIcon)
-
-    const createFlowBox = (cssClasses: string[], homogeneous: boolean = true) => new Gtk.FlowBox({
-        selectionMode: Gtk.SelectionMode.NONE,
-        columnSpacing: 8,
-        rowSpacing: 8,
-        homogeneous,
-        minChildrenPerLine: 4,
-        maxChildrenPerLine: 4,
-        cssClasses,
-    })
-
-    const pinnedRow = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        spacing: 6,
-        cssClasses: ["pinned-row"],
-    })
-
-    const pinnedFlow = createFlowBox(["pinned-grid"], false)
-    pinnedFlow.set_max_children_per_line(4)
-    pinnedFlow.set_min_children_per_line(4)
-    pinnedRow.append(pinnedFlow)
-    pinnedRow.set_size_request(-1, 225)
-
-    const flow = createFlowBox(["apps-grid"])
-
-    const noResultsLabel = new Gtk.Label({
-        label: "No se encontraron aplicaciones",
-        cssClasses: ["no-results-label"],
-        halign: Gtk.Align.CENTER,
-        valign: Gtk.Align.CENTER,
-        visible: false,
-    })
-    noResultsLabel.set_size_request(-1, 225)
-
-    const scrolled = new Gtk.ScrolledWindow({
-        hexpand: true,
-        vexpand: true,
-    })
-    scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-    scrolled.set_child(flow)
-    scrolled.set_min_content_height(225)
-
-    const clearGrid = (grid: Gtk.FlowBox) => {
-        while (grid.get_first_child()) grid.remove(grid.get_first_child()!)
-    }
-
-    const clearAllGrids = () => {
-        clearGrid(flow)
-        clearGrid(pinnedFlow)
-    }
-    
     const createAppTile = (appInfo: any, cssClasses: string[] = ["app-tile"]) => {
         const displayName = getDisplayName(appInfo)
         const iconObj = appInfo.get_icon ? appInfo.get_icon() : null
@@ -158,35 +175,115 @@ export default function AppsPanel() {
 
         btn.connect("clicked", () => launchApp(appInfo))
 
+        // Context Menu (Lazy Loaded)
+        let popover: any = null
+        const gesture = new Gtk.GestureClick({ button: 3 })
+        gesture.connect("released", () => {
+            if (!popover) {
+                popover = createContextMenu(btn, appInfo)
+            }
+            popover.popup()
+        })
+        btn.add_controller(gesture)
+
         return btn
     }
 
-    const createHighlightedAppTile = (appInfo: any) => {
-        const tile = createAppTile(appInfo, ["app-tile", "highlighted"])
-        return tile
+    const root = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 8,
+        cssClasses: ["apps-panel"],
+    })
+
+    const searchEntry = new Gtk.Entry({
+        placeholderText: "Buscar aplicaciones...",
+        cssClasses: ["app-search"],
+        hexpand: true,
+    })
+
+    const flow = new Gtk.FlowBox({
+        selectionMode: Gtk.SelectionMode.NONE,
+        columnSpacing: 8,
+        rowSpacing: 8,
+        homogeneous: true,
+        minChildrenPerLine: 4,
+        maxChildrenPerLine: 4,
+        cssClasses: ["apps-grid"],
+    })
+
+    const pinnedFlow = new Gtk.FlowBox({
+        selectionMode: Gtk.SelectionMode.NONE,
+        homogeneous: true,
+        minChildrenPerLine: 4,
+        maxChildrenPerLine: 4,
+        columnSpacing: 8,
+        rowSpacing: 8,
+        cssClasses: ["pinned-grid"],
+        halign: Gtk.Align.START,
+        hexpand: true,
+        valign: Gtk.Align.START,
+    })
+
+    const noResultsLabel = new Gtk.Label({
+        label: "No se encontraron aplicaciones",
+        cssClasses: ["no-results-label"],
+        halign: Gtk.Align.CENTER,
+        valign: Gtk.Align.CENTER,
+        visible: false,
+    })
+
+    const scrolled = new Gtk.ScrolledWindow({
+        hexpand: true,
+        vexpand: true,
+    })
+    scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+    scrolled.set_child(flow)
+    scrolled.set_min_content_height(225)
+
+    const pinnedSection = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 8,
+        cssClasses: ["pinned-section"],
+        valign: Gtk.Align.START,
+    })
+    pinnedSection.append(new Gtk.Label({
+        halign: Gtk.Align.START,
+        cssClasses: ["apps-section-title"],
+    }))
+    pinnedSection.append(pinnedFlow)
+
+    const updatePinned = () => {
+        while (pinnedFlow.get_first_child()) {
+            pinnedFlow.remove(pinnedFlow.get_first_child()!)
+        }
+        
+        const currentPins = pins.getMenu()
+        currentPins.forEach(id => {
+            const app = findById(id)
+            if (app) pinnedFlow.insert(createAppTile(app, ["app-tile", "pinned-tile"]), -1)
+        })
+        pinnedSection.visible = currentPins.length > 0
     }
 
-    const appendAppTile = (appInfo: any) => flow.append(createAppTile(appInfo))
-    const appendPinnedTile = (appInfo: any) => pinnedFlow.append(createAppTile(appInfo, ["app-tile", "pinned-tile"]))
+    pins.connect("menu-changed", updatePinned)
+    updatePinned()
+
+    let firstHighlightedApp: any = null
 
     const render = () => {
         const q = searchEntry.get_text().trim().toLowerCase()
-        clearAllGrids()
+        while (flow.get_first_child()) flow.remove(flow.get_first_child()!)
         firstHighlightedApp = null
 
         if (q.length === 0) {
             scrolled.visible = false
             noResultsLabel.visible = false
-
-            pinnedRow.visible = pinnedApps.length > 0
-            pinnedApps.forEach((a) => appendPinnedTile(a))
-
+            pinnedSection.visible = pins.getMenu().length > 0
             return
         }
 
         scrolled.visible = true
-
-        pinnedRow.visible = false
+        pinnedSection.visible = false
 
         const filtered = allInstalledApps
             .filter((a: any) => {
@@ -203,38 +300,20 @@ export default function AppsPanel() {
 
         noResultsLabel.visible = false
         
-        // Add all apps, with first one highlighted
         filtered.forEach((app, index) => {
             if (index === 0) {
                 firstHighlightedApp = app
-                flow.append(createHighlightedAppTile(app))
+                flow.append(createAppTile(app, ["app-tile", "highlighted"]))
             } else {
                 flow.append(createAppTile(app))
             }
         })
     }
 
-    const showAllApps = () => {
-        clearAllGrids()
-        searchEntry.set_text("")
-        scrolled.visible = true
-        pinnedRow.visible = false
+    searchEntry.connect("activate", () => {
+        if (firstHighlightedApp) launchApp(firstHighlightedApp)
+    })
 
-        allInstalledApps.slice(0, 60).forEach((a) => appendAppTile(a))
-    }
-
-    const toggleAllApps = () => {
-        if (isShowingAll) {
-            isShowingAll = false
-            searchEntry.set_text("")
-            render()
-        } else {
-            isShowingAll = true
-            showAllApps()
-        }
-    }
-
-    menuButton.connect("clicked", toggleAllApps)
     searchEntry.connect("changed", render)
 
     const searchBox = new Gtk.Box({
@@ -243,14 +322,37 @@ export default function AppsPanel() {
         cssClasses: ["search-box"],
     })
     searchBox.append(searchEntry)
+
+    const menuButton = new Gtk.Button({
+        cssClasses: ["menu-button"],
+        child: new Gtk.Image({ iconName: "view-grid-symbolic" })
+    })
+    
+    let isShowingAll = false
+    menuButton.connect("clicked", () => {
+        if (isShowingAll) {
+            isShowingAll = false
+            searchEntry.set_text("")
+            render()
+        } else {
+            isShowingAll = true
+            while (flow.get_first_child()) flow.remove(flow.get_first_child()!)
+            allInstalledApps.slice(0, 60).forEach((a) => flow.append(createAppTile(a)))
+            scrolled.visible = true
+            pinnedSection.visible = false
+        }
+    })
     searchBox.append(menuButton)
 
-    root.append(pinnedRow)
+    root.append(pinnedSection)
     root.append(noResultsLabel)
     root.append(scrolled)
     root.append(searchBox)
 
     render()
+
+    // @ts-ignore
+    root.searchEntry = searchEntry
 
     return root
 }

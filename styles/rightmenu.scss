@@ -163,11 +163,16 @@ window.RightMenu {
     padding: 8px;
   }
 
+  .pinned-section {
+    min-height: 225px;
+  }
+
   .pinned-row {
     margin-bottom: 0;
   }
 
   .pinned-grid {
+    margin-top: 0;
     padding: 0;
   }
 
