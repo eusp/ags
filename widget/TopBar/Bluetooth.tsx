@@ -7,9 +7,9 @@ export default function BluetoothIndicator() {
     try {
         bt = Bluetooth.get_default()
     } catch {
-        return <box />
+        return new Gtk.Box()
     }
-    if (!bt) return <box />
+    if (!bt) return new Gtk.Box()
 
     const icon = new Gtk.Image()
     const menubutton = new Gtk.MenuButton()
@@ -21,7 +21,9 @@ export default function BluetoothIndicator() {
     scrolled.set_child(list)
 
     const updateList = () => {
-        while (list.get_first_child()) list.remove(list.get_first_child()!)
+        while (list.get_first_child()) {
+            list.remove(list.get_first_child()!)
+        }
 
         if (bt.isPowered) {
             const devices = bt.devices || []
@@ -37,8 +39,7 @@ export default function BluetoothIndicator() {
                     hexpand: true,
                 }))
                 if (dev.connected) {
-                    const dot = new Gtk.Label({ label: "●", cssClasses: ["bt-connected"] })
-                    row.append(dot)
+                    row.append(new Gtk.Label({ label: "●", cssClasses: ["bt-connected"] }))
                 }
                 list.append(row)
             })
@@ -47,38 +48,46 @@ export default function BluetoothIndicator() {
         }
     }
 
+    // Usamos una función que mapea el estado actual a los ítems del menú dinámicamente
+    const getMenuSections = () => [
+        {
+            title: "Bluetooth",
+            items: [{
+                label: bt.isPowered ? "Desactivar" : "Activar",
+                icon: "system-shutdown-symbolic",
+                onClick: () => bt.toggle()
+            }]
+        },
+        {
+            customChild: scrolled
+        }
+    ]
+
+    // Inicializar Popover único
+    const popover = MenuPopover(menubutton, getMenuSections())
+    menubutton.set_popover(popover)
+
     const update = () => {
         icon.iconName = bt.isPowered
             ? "bluetooth-active-symbolic"
             : "bluetooth-disabled-symbolic"
-
         updateList()
-
-        // Create the popover ONCE or only when strictly necessary
-        if (!menubutton.get_popover()) {
-            const popover = MenuPopover(null, [
-                {
-                    title: "Bluetooth",
-                    items: [{
-                        label: bt.isPowered ? "Desactivar" : "Activar",
-                        icon: "system-shutdown-symbolic",
-                        onClick: () => bt.toggle()
-                    }]
-                },
-                {
-                    customChild: scrolled
-                }
-            ])
-            menubutton.set_popover(popover)
-        }
     }
 
+    // En lugar de reconstruir el widget, respondemos a los cambios regenerando el contenido interno si es necesario
     bt.connect("notify::is-powered", () => {
-        menubutton.set_popover(null!) // Force recreation on power toggle to update the button label
         update()
-    })
-    bt.connect("notify::devices", updateList)
+        
+        const currentPopover = menubutton.get_popover();
+        if (currentPopover) {
+            currentPopover.hide();
+        }
 
+        const newPopover = MenuPopover(menubutton, getMenuSections());
+        menubutton.set_popover(newPopover);
+    })
+
+    bt.connect("notify::devices", updateList)
     update()
 
     return menubutton

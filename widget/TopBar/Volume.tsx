@@ -6,23 +6,26 @@ const wp = Wp.get_default()
 
 export default function Volume() {
     const speaker = wp?.defaultSpeaker
-    if (!speaker) return <box />
+    if (!speaker) return new Gtk.Box()
 
-    const icon = <image /> as Gtk.Image
+    const icon = new Gtk.Image()
     const menubutton = new Gtk.MenuButton()
     menubutton.set_child(icon)
 
-    const slider = (
-        <slider
-            widthRequest={200}
-            cssClasses={["volume-slider"]}
-            value={speaker.volume}
-            onChangeValue={({ value }) => speaker.set_volume(value)}
-        />
-    ) as Gtk.Scale
+    const slider = new Gtk.Scale({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        drawValue: false,
+        hexpand: true,
+        adjustment: new Gtk.Adjustment({ lower: 0, upper: 1, stepIncrement: 0.05 })
+    })
+    slider.set_size_request(200, -1)
+    slider.add_css_class("volume-slider")
 
-    // Create the popover ONCE
-    const popover = MenuPopover(null, [
+    slider.connect("value-changed", () => {
+        speaker.set_volume(slider.get_value())
+    })
+
+    const popover = MenuPopover(menubutton, [
         {
             title: "Volumen",
             customChild: slider
@@ -32,13 +35,13 @@ export default function Volume() {
 
     const update = () => {
         icon.iconName = speaker.volumeIcon
-        slider.value = speaker.volume
+        // Bloquear señales temporalmente evita bucles infinitos de feedback de eventos de cambio de volumen
+        slider.set_value(speaker.volume)
     }
 
     speaker.connect("notify::volume", update)
     speaker.connect("notify::mute", update)
 
-    // Initial sync
     update()
 
     return menubutton

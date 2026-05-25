@@ -256,7 +256,7 @@ export default function AppsPanel() {
         while (pinnedFlow.get_first_child()) {
             pinnedFlow.remove(pinnedFlow.get_first_child()!)
         }
-        
+
         const currentPins = pins.getMenu()
         currentPins.forEach(id => {
             const app = findById(id)
@@ -299,7 +299,7 @@ export default function AppsPanel() {
         }
 
         noResultsLabel.visible = false
-        
+
         filtered.forEach((app, index) => {
             if (index === 0) {
                 firstHighlightedApp = app
@@ -327,7 +327,7 @@ export default function AppsPanel() {
         cssClasses: ["menu-button"],
         child: new Gtk.Image({ iconName: "view-grid-symbolic" })
     })
-    
+
     let isShowingAll = false
     menuButton.connect("clicked", () => {
         if (isShowingAll) {

@@ -11,63 +11,65 @@ export default function NetworkIndicator() {
     const menubutton = new Gtk.MenuButton()
     menubutton.set_child(icon)
 
-    const update = () => {
+    const container = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 4 })
+    const statusLabel = new Gtk.Label({ xalign: 0, cssClasses: ["popover-item"] })
+
+    // --- CORRECCIÓN AQUÍ ---
+    const refreshBox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 5 })
+    refreshBox.append(new Gtk.Image({ iconName: "view-refresh-symbolic" }))
+    refreshBox.append(new Gtk.Label({ label: "Actualizar" }))
+
+    const refreshBtn = new Gtk.Button({
+        cssClasses: ["popover-item"],
+        child: refreshBox // Asignamos el box ya poblado
+    })
+    // -----------------------
+
+    const wifiList = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 2 })
+
+    container.append(statusLabel)
+    container.append(refreshBtn)
+    container.append(new Gtk.Separator({ cssClasses: ["popover-separator"] }))
+    container.append(wifiList)
+
+    const updateUI = () => {
         const primary = network.primary
-        const conn = network.connectivity
+        const isConnected = network.connectivity === Connectivity.FULL
 
-        let iconName = "network-offline-symbolic"
-        let labelText = "Sin conexión"
+        icon.iconName = isConnected ? (primary?.type === "WIFI" ? (primary.wifi.iconName || "network-wireless-symbolic") : "network-wired-symbolic") : "network-offline-symbolic"
+        statusLabel.label = isConnected ? (primary?.type === "WIFI" ? `Conectado: ${primary.wifi.ssid}` : "Ethernet Conectado") : "Sin conexión"
 
-        if (conn === Connectivity.FULL) {
-            if (primary?.type === "WIFI") {
-                iconName = primary.wifi.iconName || "network-wireless-symbolic"
-                labelText = primary.wifi.ssid || "WiFi conectado"
-            } else if (primary?.type === "WIRED") {
-                iconName = "network-wired-symbolic"
-                labelText = "Ethernet conectado"
-            }
-        }
+        while (wifiList.get_first_child()) wifiList.remove(wifiList.get_first_child()!)
 
-        icon.iconName = iconName
+        if (network.wifi) {
+            network.wifi.access_points.slice(0, 6).forEach(ap => {
+                const btnContent = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 10 })
+                btnContent.append(new Gtk.Label({ label: ap.security > 0 ? "󰌾" : "󰖩" }))
+                btnContent.append(new Gtk.Label({ label: ap.ssid || "Red oculta", xalign: 0, hexpand: true }))
 
-        // Create or update Sections - For simplicity with current MenuPopover, 
-        // we recreate if needed but Network normally stable. 
-        // Actually, let's create it once with the initial state and just update the icon/label if we can.
-        // But MenuPopover creates widgets. Let's just make it call it once.
-        if (!menubutton.get_popover()) {
-            const popover = MenuPopover(null, [
-                {
-                    items: [{
-                        label: labelText,
-                        icon: iconName,
-                        onClick: () => { }
-                    }]
-                },
-                {
-                    items: [{
-                        label: "Configuración",
-                        icon: "preferences-system-network-symbolic",
-                        onClick: () => execAsync("nm-connection-editor")
-                    }]
-                }
-            ])
-            menubutton.set_popover(popover)
+                const btn = new Gtk.Button({ cssClasses: ["popover-item"], child: btnContent })
+
+                btn.connect("clicked", () => {
+                    execAsync(`nmcli device wifi connect "${ap.bssid}"`)
+                        .catch(() => execAsync("nm-connection-editor"))
+                    popover.popdown()
+                })
+                wifiList.append(btn)
+            })
         }
     }
 
-    network.connect("notify::primary", () => {
-        // Here we might need to recreate the popover if the labels strictly need to change,
-        // or we refactor MenuPopover to be updateable. 
-        // For now, let's just clear the popover and recreate IT ONLY when state changes, not on every map.
-        menubutton.set_popover(null!)
-        update()
-    })
-    network.connect("notify::connectivity", () => {
-        menubutton.set_popover(null!)
-        update()
+    refreshBtn.connect("clicked", () => {
+        execAsync("nmcli device wifi rescan").then(() => updateUI())
     })
 
-    update()
+    const popover = MenuPopover(menubutton, [{ title: "Red", customChild: container }])
+    menubutton.set_popover(popover)
 
+    network.connect("notify::primary", updateUI)
+    network.connect("notify::connectivity", updateUI)
+    if (network.wifi) network.wifi.connect("notify::access-points", updateUI)
+
+    updateUI()
     return menubutton
 }

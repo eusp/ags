@@ -1,27 +1,182 @@
 @use '../styles/colors' as *;
 
-// ═══════════════════════════════════════════════
-// NEW GLOBAL POPOVER SYSTEM
-// ═══════════════════════════════════════════════
+popover.shared-popover,
+popover.clock-popover {
+  background-color: transparent;
 
-popover {
-  border-radius: 12px;
-  background-color: transparent; // Managed by .shared-popover container
-  padding: 0px;
+  // Remoción global de la flecha nativa de GTK4
+  arrow {
+    background-color: transparent;
+    border-color: transparent;
+  }
 
   contents {
     background-color: rgba($base, 0.98);
-    border: 2px solid rgba($blue, 0.4);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    padding: 0px;
+    border: 1px solid rgba($blue, 0.4);
+    border-radius: 8px;
   }
-}
 
-.shared-popover {
+  &.edge-top contents {
+    border-top-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: 1px;
+  }
+
+  &.edge-left contents {
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 3px;
+    margin-top: 27px;
+  }
+
+  // ── COMPONENTES ESPECÍFICOS DEL RELOJ Y CALENDARIO ──
+  .clock-popover-content {
+    background-color: rgba($base, 0.5);
+  }
+
+  .popover-vertical-separator {
+    background-color: rgba($text, 0.2);
+    min-width: 1px;
+    margin: 10px 0px;
+  }
+
+  calendar.popover-calendar {
+    border: none;
+    background: transparent;
+    color: $text;
+    padding: 4px;
+
+    &:selected {
+      background-color: $blue;
+      color: $base;
+      border-radius: 6px;
+    }
+  }
+
+  .popover-clock-right {
+    min-width: 280px;
+
+    .popover-clock-zone {
+      padding: 4px;
+
+      .popover-digital-time {
+        font-family: "JetBrainsMono Nerd Font", monospace;
+        font-size: 32px;
+        font-weight: 800;
+        color: $text;
+        letter-spacing: 1px;
+      }
+
+      .popover-digital-date {
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: $subtext0;
+        margin-top: 4px;
+      }
+    }
+
+    .popover-notifs-zone {
+      .popover-notifs-header {
+
+        .popover-notifs-title {
+          font-family: "Inter", sans-serif;
+          font-size: 14px;
+          font-weight: 700;
+          color: $text;
+        }
+
+        .popover-notifs-clear {
+          all: unset;
+          font-family: "Inter", sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          color: rgba($text, 0.6);
+          padding: 4px 8px;
+          border-radius: 6px;
+          background: rgba($surface1, 0.3);
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: $red;
+            background: rgba($red, 0.15);
+          }
+        }
+      }
+
+      .popover-notifs-scrolled {
+        border-radius: 8px;
+        background: rgba($surface0, 0.3);
+        padding: 4px;
+      }
+
+      .popover-notif-empty {
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        color: $subtext0;
+        padding: 24px;
+      }
+
+      .popover-notif-item {
+        background: rgba($surface1, 0.3);
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 4px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        &:hover {
+          background: rgba($surface1, 0.6);
+        }
+
+        image {
+          font-size: 20px;
+          color: $blue;
+        }
+
+        .popover-notif-summary {
+          font-family: "Inter", sans-serif;
+          font-size: 13px;
+          font-weight: 600;
+          color: $text;
+        }
+
+        .popover-notif-body {
+          font-family: "Inter", sans-serif;
+          font-size: 11.5px;
+          color: $subtext0;
+        }
+
+        .popover-notif-dismiss {
+          all: unset;
+          color: rgba($text, 0.4);
+          padding: 4px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: $red;
+            background: rgba($red, 0.15);
+          }
+
+          image {
+            font-size: 12px;
+            color: inherit;
+          }
+        }
+      }
+    }
+  }
+
+  // ── ELEMENTOS DE TUS POPOVERS PERSONALIZADOS (MenuPopover) ──
   .popover-section-title {
     color: $text;
-    font-size: 11px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
   }
@@ -31,15 +186,15 @@ popover {
     padding: 8px 14px;
     border-radius: 8px;
     color: rgba($text, 0.9);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba($text, 0);
 
     image {
-      font-size: 16px;
+      font-size: 13px;
       color: $blue;
     }
 
     label {
-      font-size: 13.5px;
+      font-size: 12px;
       font-family: "Inter", sans-serif;
       font-weight: 500;
     }
@@ -47,43 +202,49 @@ popover {
     &:hover {
       background-color: rgba($blue, 0.12);
       color: $blue;
-
-      image {
-        color: $blue;
-      }
+      border: 1px solid rgba($text, 0.15);
     }
 
-    &.dangerous {
-      image {
-        color: rgba($red, 0.8);
-      }
-
-      &:hover {
-        background-color: rgba($red, 0.15);
-        color: $red;
-
-        image {
-          color: $red;
-        }
-      }
+    &.dangerous:hover {
+      background-color: rgba($red, 0.15);
+      color: $red;
     }
   }
 
   .popover-separator {
     background-color: $surface1;
     min-height: 2px;
-    margin-top: 3px;
-    margin-bottom: 3px;
+    margin: 3px 0;
+  }
+
+  // ── ELEMENTOS DE LOS POPOVERS AUTOMÁTICOS (SysTray / DBusMenu) ──
+  modelbutton {
+    padding: 0px 14px;
+    border-radius: 6px;
+    color: rgba($text, 0.9);
+    font-size: 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    border: 1px solid rgba($text, 0);
+
+    &:hover {
+      background-color: rgba($blue, 0.12);
+      color: $blue;
+      border: 1px solid rgba($text, 0.15);
+    }
+  }
+
+  separator {
+    background-color: $surface1;
+    min-height: 2px;
+    margin: 3px 0;
   }
 }
 
-// Keep existing specific overrides if necessary, but update them to match
-.network-popover,
-.volume-popover,
-.mic-popover,
-.bt-popover,
-.sysmon-popover,
-.clipboard-popover {
-  @extend .shared-popover;
-  min-width: 180px;
+.systray-popover {
+  contents {
+    margin-top: -10px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+  }
 }

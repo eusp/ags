@@ -61,12 +61,8 @@ export default function SystemMonitor() {
     memRow.append(memLabel)
     statsBox.append(memRow)
 
-    // Create the popover ONCE
-    const popover = MenuPopover(null, [
-        {
-            title: "Rendimiento",
-            customChild: statsBox
-        }
+    const popover = MenuPopover(menubutton, [
+        { title: "Rendimiento", customChild: statsBox }
     ])
     menubutton.set_popover(popover)
 
@@ -75,13 +71,11 @@ export default function SystemMonitor() {
         memLabel.label = getMemUsage()
     }
 
-    // Update periodically
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
         if (popover.visible) update()
         return GLib.SOURCE_CONTINUE
     })
 
-    // Initial update
     update()
 
     return menubutton

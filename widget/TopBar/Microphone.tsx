@@ -27,22 +27,20 @@ export default function Microphone() {
             : "audio-input-microphone-symbolic"
         slider.value = mic.volume
 
-        if (!menubutton.get_popover()) {
-            const popover = MenuPopover(null, [
-                {
-                    title: "Micrófono",
-                    customChild: slider
-                },
-                {
-                    items: [{
-                        label: mic.mute ? "Activar" : "Silenciar",
-                        icon: "microphone-sensitivity-medium-symbolic",
-                        onClick: () => mic.set_mute(!mic.mute)
-                    }]
-                }
-            ])
-            menubutton.set_popover(popover)
-        }
+        const popover = MenuPopover(menubutton, [
+            {
+                title: "Micrófono",
+                customChild: slider
+            },
+            {
+                items: [{
+                    label: mic.mute ? "Activar" : "Silenciar",
+                    icon: "microphone-sensitivity-medium-symbolic",
+                    onClick: () => mic.set_mute(!mic.mute)
+                }]
+            }
+        ])
+        menubutton.set_popover(popover)
     }
 
     mic.connect("notify::volume", () => {
