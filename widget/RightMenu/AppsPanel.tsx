@@ -142,13 +142,23 @@ export default function AppsPanel() {
         }
     }
 
+    // ── Helper: crea un FlowBox con configuración idéntica ──────────────────
+    const createAppFlow = (extraClasses: string[] = []) => new Gtk.FlowBox({
+        selectionMode: Gtk.SelectionMode.NONE,
+        columnSpacing: 8,
+        rowSpacing: 8,
+        homogeneous: true,
+        minChildrenPerLine: 4,
+        maxChildrenPerLine: 4,
+        hexpand: true,
+        vexpand: false,
+        cssClasses: ["apps-grid", ...extraClasses],
+    })
     const createAppTile = (appInfo: any, cssClasses: string[] = ["app-tile"]) => {
         const displayName = getDisplayName(appInfo)
         const iconObj = appInfo.get_icon ? appInfo.get_icon() : null
 
-        const btn = new Gtk.Button({
-            cssClasses,
-        })
+        const btn = new Gtk.Button({ cssClasses })
 
         const box = new Gtk.Box({
             orientation: Gtk.Orientation.VERTICAL,
@@ -201,28 +211,9 @@ export default function AppsPanel() {
         hexpand: true,
     })
 
-    const flow = new Gtk.FlowBox({
-        selectionMode: Gtk.SelectionMode.NONE,
-        columnSpacing: 8,
-        rowSpacing: 8,
-        homogeneous: true,
-        minChildrenPerLine: 4,
-        maxChildrenPerLine: 4,
-        cssClasses: ["apps-grid"],
-    })
-
-    const pinnedFlow = new Gtk.FlowBox({
-        selectionMode: Gtk.SelectionMode.NONE,
-        homogeneous: true,
-        minChildrenPerLine: 4,
-        maxChildrenPerLine: 4,
-        columnSpacing: 8,
-        rowSpacing: 8,
-        cssClasses: ["pinned-grid"],
-        halign: Gtk.Align.START,
-        hexpand: true,
-        valign: Gtk.Align.START,
-    })
+    // ── FlowBoxes con configuración unificada ────────────────────────────────
+    const flow = createAppFlow()
+    const pinnedFlow = createAppFlow(["pinned-grid"])
 
     const noResultsLabel = new Gtk.Label({
         label: "No se encontraron aplicaciones",
@@ -234,17 +225,18 @@ export default function AppsPanel() {
 
     const scrolled = new Gtk.ScrolledWindow({
         hexpand: true,
-        vexpand: true,
+        vexpand: false,          // ← quitar el vexpand
     })
     scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
     scrolled.set_child(flow)
     scrolled.set_min_content_height(225)
+    scrolled.set_max_content_height(225)
+    scrolled.set_propagate_natural_height(true)
 
     const pinnedSection = new Gtk.Box({
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 8,
         cssClasses: ["pinned-section"],
-        valign: Gtk.Align.START,
     })
     pinnedSection.append(new Gtk.Label({
         halign: Gtk.Align.START,

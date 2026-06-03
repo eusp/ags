@@ -7,87 +7,128 @@ window.SideBar {
   background: transparent;
 
   .sidebar-container {
-    background-color: $base;
+    background-color: rgba($base, 0.98);
     padding: 12px 0px;
     min-width: 38px;
-    border-right: 2px solid rgba($blue, 0.4);
+
+    border-right: 2px solid $primary-muted;
+
+    box-shadow:
+      inset -1px 0 0 rgba($accent0, 0.05),
+      0 0 20px rgba($primary, 0.08);
   }
 
-  // --- App Shortcuts ---
+  // ─────────────────────────────────────────────
+  // App Shortcuts
+  // ─────────────────────────────────────────────
+
   .shortcut-btn {
     all: unset;
-    color: rgba($text, 0.6);
+
+    color: rgba($subtext0, 0.65);
+
     padding: 8px 0;
-    margin: 2px; // Add some margin for the active indicator to look good
-    border-radius: 6px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 2px solid transparent; // Reserve space for border
+    margin: 2px;
+
+    border-radius: 8px;
+    border-left: 2px solid transparent;
+
+    transition: all 0.25s ease;
 
     image {
       font-size: 18px;
     }
 
     &:hover {
-      color: $text;
-      text-shadow: 0 0 10px rgba($blue, 0.6);
-      background: rgba($blue, 0.1);
+      color: $accent0;
+
+      background: rgba($overlay0, 0.8);
+
+      border-left-color: rgba($primary, 0.4);
+
+      text-shadow: 0 0 8px rgba($primary-alt, 0.35);
     }
 
     &.active {
       color: $text;
-      border-left-color: $blue;
-      background: rgba($blue, 0.15);
+
+      background: rgba($primary, 0.18);
+
+      border-left-color: $primary;
+
+      box-shadow:
+        inset 0 0 0 1px rgba($primary-alt, 0.15),
+        0 0 12px rgba($primary, 0.12);
     }
   }
 
   .shortcut-btn.running {
-    color: rgba($text, 0.6);
-    border-left-color: rgba($text, 0.2);
+    color: rgba($accent0, 0.55);
+
+    border-left-color: rgba($primary-muted, 0.4);
 
     &:hover {
-      color: $text;
-      text-shadow: 0 0 10px rgba($blue, 0.6);
-      background: rgba($blue, 0.1);
+      color: $accent0;
+
+      background: rgba($overlay0, 0.8);
+
+      border-left-color: $primary;
+
+      text-shadow: 0 0 8px rgba($primary-alt, 0.35);
     }
   }
 
-  // --- Media Visualizer ---
+  // ─────────────────────────────────────────────
+  // Media Visualizer
+  // ─────────────────────────────────────────────
+
   .media-visualizer {
     padding: 4px;
     margin-left: 3px;
     min-width: 32px;
 
     .vis-noise-line {
-      // GTK CSS doesn't support flexbox layout properties
-      // Layout is handled by Gtk.Box properties in the widget code
-
       .vis-noise-seg {
-        background: rgba($text, 0.5);
+        background: rgba($primary-alt, 0.55);
+
         min-height: 1px;
         border-radius: 2px;
       }
     }
   }
 
-  // --- Media Controls ---
+  // ─────────────────────────────────────────────
+  // Media Controls
+  // ─────────────────────────────────────────────
+
   .media-controls {
+
     .media-title {
       font-family: "JetBrainsMono Nerd Font", monospace;
       font-size: 1px;
-      color: rgba($text, 0.8);
+
+      color: rgba($accent0, 0.75);
+
       transform: rotate(90deg) scale(12);
       transform-origin: center center;
+
       margin-right: 5px;
     }
 
     button {
       all: unset;
-      color: rgba($text, 0.6);
+
+      color: rgba($subtext0, 0.6);
+
       padding: 2px;
-      transition: color 0.2s ease;
+
+      transition: all 0.2s ease;
 
       &:hover {
-        color: $text;
+        color: $primary-alt;
+
+        text-shadow:
+          0 0 8px rgba($primary-alt, 0.4);
       }
 
       image {
@@ -96,13 +137,15 @@ window.SideBar {
     }
   }
 
-  .system-zone {
-    border-top: 1px solid rgba($surface1, 0.3);
-    padding-top: 10px;
-  }
+  // ─────────────────────────────────────────────
+  // System Zone
+  // ─────────────────────────────────────────────
 
   .system-zone {
-    border-top: 1px solid rgba($surface1, 0.3);
+    border-top: 1px solid rgba($primary-muted, 0.25);
+
     padding-top: 10px;
+
+    margin-top: 4px;
   }
 }

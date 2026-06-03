@@ -4,7 +4,6 @@ popover.shared-popover,
 popover.clock-popover {
   background-color: transparent;
 
-  // Remoción global de la flecha nativa de GTK4
   arrow {
     background-color: transparent;
     border-color: transparent;
@@ -12,8 +11,14 @@ popover.clock-popover {
 
   contents {
     background-color: rgba($base, 0.98);
-    border: 1px solid rgba($blue, 0.4);
-    border-radius: 8px;
+
+    border: 1px solid rgba($primary, 0.25);
+
+    border-radius: 10px;
+
+    box-shadow:
+      0 0 24px rgba($primary, 0.08),
+      inset 0 1px 0 rgba($accent0, 0.04);
   }
 
   &.edge-top contents {
@@ -31,27 +36,40 @@ popover.clock-popover {
     margin-top: 27px;
   }
 
-  // ── COMPONENTES ESPECÍFICOS DEL RELOJ Y CALENDARIO ──
+  // ═══════════════════════════════════════════════
+  // CLOCK POPOVER
+  // ═══════════════════════════════════════════════
+
   .clock-popover-content {
     background-color: rgba($base, 0.5);
   }
 
   .popover-vertical-separator {
-    background-color: rgba($text, 0.2);
+    background-color: rgba($primary-muted, 0.25);
+
     min-width: 1px;
-    margin: 10px 0px;
+
+    margin: 10px 0;
   }
 
   calendar.popover-calendar {
     border: none;
+
     background: transparent;
-    color: $text;
+
+    color: rgba($subtext0, 0.85);
+
     padding: 4px;
 
     &:selected {
-      background-color: $blue;
-      color: $base;
+      background-color: $primary;
+
+      color: $text;
+
       border-radius: 6px;
+
+      box-shadow:
+        0 0 8px rgba($primary-alt, 0.25);
     }
   }
 
@@ -63,108 +81,155 @@ popover.clock-popover {
 
       .popover-digital-time {
         font-family: "JetBrainsMono Nerd Font", monospace;
+
         font-size: 32px;
+
         font-weight: 800;
-        color: $text;
+
+        color: $accent0;
+
         letter-spacing: 1px;
+
+        text-shadow:
+          0 0 10px rgba($primary-alt, 0.15);
       }
 
       .popover-digital-date {
         font-family: "Inter", sans-serif;
+
         font-size: 13px;
+
         font-weight: 500;
-        color: $subtext0;
+
+        color: rgba($subtext0, 0.8);
+
         margin-top: 4px;
       }
     }
 
     .popover-notifs-zone {
+
       .popover-notifs-header {
 
         .popover-notifs-title {
           font-family: "Inter", sans-serif;
+
           font-size: 14px;
+
           font-weight: 700;
-          color: $text;
+
+          color: $accent0;
         }
 
         .popover-notifs-clear {
           all: unset;
+
           font-family: "Inter", sans-serif;
+
           font-size: 12px;
+
           font-weight: 600;
-          color: rgba($text, 0.6);
+
+          color: rgba($subtext0, 0.75);
+
           padding: 4px 8px;
+
           border-radius: 6px;
-          background: rgba($surface1, 0.3);
-          transition: all 0.2s ease;
+
+          background: rgba($surface1, 0.45);
 
           &:hover {
-            color: $red;
-            background: rgba($red, 0.15);
+            color: $danger;
+
+            background: rgba($danger, 0.15);
           }
         }
       }
 
       .popover-notifs-scrolled {
         border-radius: 8px;
-        background: rgba($surface0, 0.3);
+
+        background: rgba($surface0, 0.55);
+
         padding: 4px;
+
+        border: 1px solid rgba($primary, 0.06);
       }
 
       .popover-notif-empty {
         font-family: "Inter", sans-serif;
+
         font-size: 13px;
-        color: $subtext0;
+
+        color: rgba($subtext0, 0.7);
+
         padding: 24px;
       }
 
       .popover-notif-item {
-        background: rgba($surface1, 0.3);
+        background: rgba($surface1, 0.45);
+
         border-radius: 8px;
+
         padding: 8px 10px;
+
         margin-bottom: 4px;
+
+        transition: all 0.2s ease;
 
         &:last-child {
           margin-bottom: 0;
         }
 
         &:hover {
-          background: rgba($surface1, 0.6);
+          background: rgba($overlay0, 0.9);
+
+          box-shadow:
+            inset 0 0 0 1px rgba($primary, 0.08);
         }
 
         image {
           font-size: 20px;
-          color: $blue;
+
+          color: $primary;
         }
 
         .popover-notif-summary {
           font-family: "Inter", sans-serif;
+
           font-size: 13px;
+
           font-weight: 600;
-          color: $text;
+
+          color: rgba($accent0, 0.95);
         }
 
         .popover-notif-body {
           font-family: "Inter", sans-serif;
+
           font-size: 11.5px;
-          color: $subtext0;
+
+          color: rgba($subtext0, 0.85);
         }
 
         .popover-notif-dismiss {
           all: unset;
-          color: rgba($text, 0.4);
+
+          color: rgba($subtext0, 0.45);
+
           padding: 4px;
+
           border-radius: 4px;
-          transition: all 0.2s ease;
 
           &:hover {
-            color: $red;
-            background: rgba($red, 0.15);
+            color: $danger;
+
+            background: rgba($danger, 0.15);
           }
 
           image {
             font-size: 12px;
+
             color: inherit;
           }
         }
@@ -172,79 +237,155 @@ popover.clock-popover {
     }
   }
 
-  // ── ELEMENTOS DE TUS POPOVERS PERSONALIZADOS (MenuPopover) ──
+  // ═══════════════════════════════════════════════
+  // CUSTOM MENU POPOVERS
+  // ═══════════════════════════════════════════════
+
   .popover-section-title {
-    color: $text;
+    color: $primary;
+
     font-family: "Inter", sans-serif;
+
     font-size: 12px;
+
     font-weight: 700;
+
     text-transform: uppercase;
+
+    letter-spacing: 0.5px;
   }
 
   .popover-item {
     all: unset;
+
     padding: 8px 14px;
+
     border-radius: 8px;
-    color: rgba($text, 0.9);
-    border: 1px solid rgba($text, 0);
+
+    color: rgba($subtext0, 0.9);
+
+    border: 1px solid transparent;
+
+    transition: all 0.2s ease;
 
     image {
       font-size: 13px;
-      color: $blue;
+
+      color: $primary;
     }
 
     label {
       font-size: 12px;
+
       font-family: "Inter", sans-serif;
+
       font-weight: 500;
     }
 
     &:hover {
-      background-color: rgba($blue, 0.12);
-      color: $blue;
-      border: 1px solid rgba($text, 0.15);
+      background-color: rgba($overlay0, 0.9);
+
+      color: $accent0;
+
+      border: 1px solid rgba($primary, 0.12);
     }
 
     &.dangerous:hover {
-      background-color: rgba($red, 0.15);
-      color: $red;
+      background-color: rgba($danger, 0.15);
+
+      color: $danger;
     }
   }
 
   .popover-separator {
-    background-color: $surface1;
-    min-height: 2px;
-    margin: 3px 0;
+    background-color: rgba($primary-muted, 0.25);
+
+    min-height: 1px;
+
+    margin: 4px 0;
   }
 
-  // ── ELEMENTOS DE LOS POPOVERS AUTOMÁTICOS (SysTray / DBusMenu) ──
+  // ═══════════════════════════════════════════════
+  // VOLUME SLIDER
+  // ═══════════════════════════════════════════════
+
+  .volume-slider {
+    min-width: 150px;
+
+    slider {
+      min-height: 15px;
+
+      min-width: 15px;
+
+      margin: -5px;
+
+      background: $primary-alt;
+
+      border-radius: 50%;
+
+      box-shadow:
+        0 0 8px rgba($primary-alt, 0.25);
+    }
+
+    trough {
+      background-color: rgba($surface2, 0.8);
+
+      min-height: 6px;
+
+      border-radius: 3px;
+
+      highlight {
+        background-color: $primary;
+
+        border-radius: 3px;
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════════
+  // DBUSMENU / SYSTRAY
+  // ═══════════════════════════════════════════════
+
   modelbutton {
-    padding: 0px 14px;
+    padding: 0 14px;
+
     border-radius: 6px;
-    color: rgba($text, 0.9);
+
+    color: rgba($subtext0, 0.9);
+
     font-size: 12px;
+
     font-family: "Inter", sans-serif;
+
     font-weight: 500;
-    border: 1px solid rgba($text, 0);
+
+    border: 1px solid transparent;
+
+    transition: all 0.2s ease;
 
     &:hover {
-      background-color: rgba($blue, 0.12);
-      color: $blue;
-      border: 1px solid rgba($text, 0.15);
+      background-color: rgba($overlay0, 0.9);
+
+      color: $accent0;
+
+      border: 1px solid rgba($primary, 0.12);
     }
   }
 
   separator {
-    background-color: $surface1;
-    min-height: 2px;
-    margin: 3px 0;
+    background-color: rgba($primary-muted, 0.25);
+
+    min-height: 1px;
+
+    margin: 4px 0;
   }
 }
 
 .systray-popover {
   contents {
     margin-top: -10px;
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
+
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 }

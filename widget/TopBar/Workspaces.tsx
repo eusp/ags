@@ -4,40 +4,52 @@ import Hyprland from "gi://AstalHyprland"
 const hypr = Hyprland.get_default()
 
 export default function Workspaces() {
+    const buttons: Gtk.Button[] = []
     const list = <box spacing={8} cssClasses={["workspaces"]} /> as Gtk.Box
 
     const update = () => {
-        while (list.get_first_child()) {
-            list.remove(list.get_first_child()!)
-        }
-
         const current = hypr.focusedWorkspace.id
-        const count = Math.max(5, current)
+        
+        if (buttons.length === 0) {
+            const count = 5 
+            
+            for (let i = 1; i <= count; i++) {
+                const dot = <box cssClasses={["dot"]} /> as Gtk.Box
+                dot.set_size_request(6, 10)
 
-        for (let i = 1; i <= count; i++) {
-            const dot = <box cssClasses={["dot"]} /> as Gtk.Box;
-            dot.set_size_request(6, 10);
+                const btn = <button
+                    onClicked={() => hypr.dispatch("workspace", String(i))}
+                >
+                    {dot}
+                </button> as Gtk.Button
 
-            const btn = <button
-                cssClasses={["ws-dot", current === i ? "active" : ""]}
-                onClicked={() => hypr.dispatch("workspace", String(i))}
-            >
-                {dot}
-            </button> as Gtk.Button;
+                btn.add_css_class("ws-dot")
+                btn.set_margin_top(9)
+                btn.set_margin_bottom(9)
+                btn.set_size_request(12, 12)
 
-            btn.set_margin_top(9);
-            btn.set_margin_bottom(9);
-            btn.set_margin_start(0);
-            btn.set_margin_end(0);
-
-            btn.set_size_request(12, 12);
-
-            list.append(btn);
+                buttons.push(btn)
+                list.append(btn)
+            }
         }
 
+        buttons.forEach((btn, index) => {
+            const wsNumber = index + 1
+            if (wsNumber === current) {
+                btn.add_css_class("active")
+            } else {
+                btn.remove_css_class("active")
+            }
+        })
     }
 
-    hypr.connect("notify::focused-workspace", update)
+    const handlerId = hypr.connect("notify::focused-workspace", update)
+
+    list.connect("destroy", () => {
+        hypr.disconnect(handlerId)
+    })
+
     update()
+
     return list
 }

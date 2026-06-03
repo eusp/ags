@@ -1,9 +1,9 @@
 import { Gtk } from "ags/gtk4"
-import Gdk from "gi://Gdk?version=4.0"
 import GLib from "gi://GLib"
 
 export interface MenuItem {
-    label: string
+    label?: string
+    child?: Gtk.Widget
     icon?: string
     onClick: () => void
     isDangerous?: boolean
@@ -20,7 +20,6 @@ export function MenuPopover(
     sections: MenuSection[],
     position: Gtk.PositionType = Gtk.PositionType.BOTTOM
 ) {
-
     const popover = new Gtk.Popover({
         cssClasses: ["shared-popover"],
         hasArrow: false,
@@ -30,13 +29,10 @@ export function MenuPopover(
 
     popover.connect("notify::visible", () => {
         if (!popover.visible || !parent) return
-
         const currentPosition = popover.get_position()
-
         if (currentPosition === Gtk.PositionType.BOTTOM) {
             popover.add_css_class("edge-top")
-        } 
-        else if (currentPosition === Gtk.PositionType.RIGHT) {
+        } else if (currentPosition === Gtk.PositionType.RIGHT) {
             popover.add_css_class("edge-left")
         }
     })
@@ -54,7 +50,6 @@ export function MenuPopover(
                 xalign: 0.5,
                 cssClasses: ["popover-section-title"]
             }))
-
             mainBox.append(new Gtk.Separator({
                 orientation: Gtk.Orientation.HORIZONTAL,
                 cssClasses: ["popover-separator"]
@@ -80,16 +75,17 @@ export function MenuPopover(
                 if (item.icon)
                     inner.append(new Gtk.Image({ iconName: item.icon }))
 
-                inner.append(
-                    new Gtk.Label({
-                        label: item.label,
+                if (item.child) {
+                    inner.append(item.child)
+                } else {
+                    inner.append(new Gtk.Label({
+                        label: item.label ?? "",
                         xalign: 0,
                         hexpand: true
-                    })
-                )
+                    }))
+                }
 
                 btn.set_child(inner)
-
                 btn.connect("clicked", () => {
                     item.onClick()
                     popover.popdown()
@@ -99,8 +95,7 @@ export function MenuPopover(
             })
 
             mainBox.append(sectionBox)
-        }
-        else if (section.customChild) {
+        } else if (section.customChild) {
             const oldParent = section.customChild.get_parent()
             if (oldParent && oldParent !== mainBox) {
                 if (oldParent instanceof Gtk.Box) {
@@ -109,18 +104,15 @@ export function MenuPopover(
                     (oldParent as any).set_child(null)
                 }
             }
-
             section.customChild.add_css_class("popover-custom-content")
             mainBox.append(section.customChild)
         }
 
         if (idx < sections.length - 1) {
-            mainBox.append(
-                new Gtk.Separator({
-                    orientation: Gtk.Orientation.HORIZONTAL,
-                    cssClasses: ["popover-separator"]
-                })
-            )
+            mainBox.append(new Gtk.Separator({
+                orientation: Gtk.Orientation.HORIZONTAL,
+                cssClasses: ["popover-separator"]
+            }))
         }
     })
 
@@ -130,7 +122,6 @@ export function MenuPopover(
         } else {
             popover.set_parent(parent)
         }
-        
         parent.connect("destroy", () => {
             if (!popover.is_finalized && popover.get_parent() === parent) {
                 popover.set_parent(null!)

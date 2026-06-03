@@ -48,7 +48,6 @@ export default function SystemMonitor() {
     const memLabel = new Gtk.Label({ xalign: 0, cssClasses: ["popover-label"] })
 
     const statsBox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 10 })
-
     const cpuRow = new Gtk.Box({ spacing: 8 })
     cpuRow.append(new Gtk.Image({ iconName: "computer-symbolic", cssClasses: ["dim"] }))
     cpuRow.append(new Gtk.Label({ label: "CPU:", cssClasses: ["dim"] }))
@@ -75,8 +74,6 @@ export default function SystemMonitor() {
         if (popover.visible) update()
         return GLib.SOURCE_CONTINUE
     })
-
-    update()
 
     return menubutton
 }
