@@ -5,6 +5,8 @@ import Gio from "gi://Gio?version=2.0"
 const mpris = Mpris.get_default()
 
 export function MediaControls() {
+    const sep = () => new Gtk.Box({ cssClasses: ["sidebar-separator"] })
+
     const container = (
         <box orientation={Gtk.Orientation.VERTICAL}
             cssClasses={["media-controls"]}
@@ -56,6 +58,7 @@ export function MediaControls() {
                     }).init(null)
                 }
             })
+            container.append(sep())
             container.append(placeholder)
             return
         }
@@ -73,7 +76,8 @@ export function MediaControls() {
             maxWidthChars: 15,
         })
         titleLabel.add_css_class("media-title")
-        titleLabel.set_size_request(-1, 150)
+        titleLabel.set_size_request(-1, 160)
+        container.append(sep())
         container.append(titleLabel)
 
         // Controles
@@ -102,6 +106,7 @@ export function MediaControls() {
         controls.append(prevBtn)
         controls.append(playBtn)
         controls.append(nextBtn)
+        container.append(sep())
         container.append(controls)
     }
 

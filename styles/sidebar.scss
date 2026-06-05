@@ -153,4 +153,15 @@ window.SideBar {
       }
     }
   }
+
+  // ─────────────────────────────────────────────
+  // Separador
+  // ─────────────────────────────────────────────
+  
+  .sidebar-separator {
+    min-height: 1px;
+    margin: 4px 6px;
+    background: rgba($primary-muted, 0.3);
+    border-radius: 1px;
+  }
 }
