@@ -208,8 +208,8 @@ window.RightMenu {
   // ═══════════════════════════════════════════════
 
   .apps-panel {
-    border-top: 1px solid rgba($primary-muted, 0.25);
-    border-bottom: 1px solid rgba($primary-muted, 0.25);
+    border-top: 1px solid rgba($primary-muted, 0.5);
+    border-bottom: 1px solid rgba($primary-muted, 0.5);
 
     border-radius: 12px;
 
@@ -236,7 +236,7 @@ window.RightMenu {
 
     color: $accent0;
 
-    border-bottom: 1px solid rgba($primary-muted, 0.3);
+    border-bottom: 1px solid rgba($primary-muted, 0.5);
 
     &:focus-within {
       background: rgba($overlay0, 0.8);
@@ -248,7 +248,7 @@ window.RightMenu {
   }
 
   .menu-button {
-    border-bottom: 1px solid rgba($primary-muted, 0.3);
+    border-bottom: 1px solid rgba($primary-muted, 0.5);
 
     padding-left: 10px;
     padding-right: 10px;

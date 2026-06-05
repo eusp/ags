@@ -17,11 +17,34 @@ function getWidgetExactCoords(widget: Gtk.Widget) {
     }
 }
 
+// ═══════════════════════════════════════
+// UTILIDADES DE NOTIFICACIONES
+// ═══════════════════════════════════════
+export const hasNotifications = () => notifd.get_notifications().length > 0
+export const notifCount = () => notifd.get_notifications().length
+
 export default function Clock() {
     // ═══════════════════════════════════════
     // CLOCKS
     // ═══════════════════════════════════════
     const barLabel = <label cssClasses={["clock"]} /> as Gtk.Label
+
+    const notifBadge = new Gtk.Label({
+        cssClasses: ["clock-notif-badge"],
+        visible: false,
+        valign: Gtk.Align.CENTER,
+        halign: Gtk.Align.CENTER,
+        label: "",
+    })
+
+    const buttonContent = new Gtk.Box({
+        spacing: 6,
+        cssClasses: ["clock-button-content"],
+        valign: Gtk.Align.CENTER,
+    })
+    buttonContent.append(barLabel)
+    buttonContent.append(notifBadge)
+
     const popoverTimeLabel = <label cssClasses={["popover-digital-time"]} /> as Gtk.Label
     const popoverDateLabel = <label cssClasses={["popover-digital-date"]} /> as Gtk.Label
 
@@ -50,12 +73,17 @@ export default function Clock() {
         const textBox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, hexpand: true })
         const summary = new Gtk.Label({ halign: Gtk.Align.START, cssClasses: ["popover-notif-summary"], ellipsize: 3, xalign: 0 })
         const body = new Gtk.Label({ halign: Gtk.Align.START, cssClasses: ["popover-notif-body"], ellipsize: 3, xalign: 0 })
-        const dismissBtn = new Gtk.Button({ cssClasses: ["popover-notif-dismiss"], valign: Gtk.Align.CENTER, child: new Gtk.Image({ iconName: "window-close-symbolic" }) })
+        const dismissBtn = new Gtk.Button({
+            cssClasses: ["popover-notif-dismiss"],
+            valign: Gtk.Align.CENTER,
+            child: new Gtk.Image({ iconName: "window-close-symbolic" }),
+        })
 
         dismissBtn.connect("clicked", () => {
-            const n = dismissBtn.get_data("notif-obj");
-            if (n) n.dismiss();
-        });
+            const ns = notifd.get_notifications()
+            const n = ns[i]
+            if (n) n.dismiss()
+        })
 
         textBox.append(summary)
         textBox.append(body)
@@ -68,16 +96,22 @@ export default function Clock() {
 
     const updateNotifications = () => {
         const ns = notifd.get_notifications()
+        const count = ns.length
+
+        // Badge con contador inline (a la derecha del reloj)
+        notifBadge.label = count > 9 ? "9+" : String(count)
+        notifBadge.visible = count > 0
+
         notifRows.forEach((row, i) => {
             const n = ns[i]
             if (n) {
                 const icon = row.get_first_child() as Gtk.Image
                 const textBox = icon.get_next_sibling() as Gtk.Box
-                const [summary, body] = textBox.get_children() as Gtk.Label[]
+                const summary = textBox.get_first_child() as Gtk.Label
+                const body = summary?.get_next_sibling() as Gtk.Label
                 icon.icon_name = n.app_icon || "dialog-information-symbolic"
                 summary.label = n.summary || ""
                 body.label = n.body || ""
-                row.get_last_child()?.set_data("notif-obj", n)
                 row.visible = true
             } else {
                 row.visible = false
@@ -87,13 +121,14 @@ export default function Clock() {
 
     notifd.connect("notified", updateNotifications)
     notifd.connect("resolved", updateNotifications)
+    updateNotifications()
 
     // ═══════════════════════════════════════
     // POPUP UI
     // ═══════════════════════════════════════
     const calendar = new Gtk.Calendar({ cssClasses: ["popover-calendar"] })
     const popover = new Gtk.Popover({ cssClasses: ["clock-popover", "shared-popover"], hasArrow: false })
-    
+
     popover.set_child(
         <box spacing={16} cssClasses={["clock-popover-content"]}>
             {calendar}
@@ -106,19 +141,29 @@ export default function Clock() {
                 <box orientation={Gtk.Orientation.VERTICAL} spacing={6} cssClasses={["popover-notifs-zone"]} vexpand={true}>
                     <box spacing={8} cssClasses={["popover-notifs-header"]}>
                         <label label="Notificaciones" cssClasses={["popover-notifs-title"]} hexpand halign={Gtk.Align.START} />
-                        <button cssClasses={["popover-notifs-clear"]} label="Limpiar todo" onClicked={() => notifd.get_notifications().forEach(n => n.dismiss())} />
+                        <button
+                            cssClasses={["popover-notifs-clear"]}
+                            label="Limpiar todo"
+                            onClicked={() => notifd.get_notifications().forEach(n => n.dismiss())}
+                        />
                     </box>
-                    <scrolledwindow vexpand={true} heightRequest={180} widthRequest={300} cssClasses={["popover-notifs-scrolled"]} child={notifList} />
+                    <scrolledwindow
+                        vexpand={true}
+                        heightRequest={180}
+                        widthRequest={300}
+                        cssClasses={["popover-notifs-scrolled"]}
+                        child={notifList}
+                    />
                 </box>
             </box>
         </box>
     )
 
-    const menuButton = new Gtk.MenuButton({ cssClasses: ["clock-button"], child: barLabel, popover: popover })
+    const menuButton = new Gtk.MenuButton({ child: buttonContent, popover: popover })
 
     popover.connect("notify::visible", () => {
         if (!popover.visible) return
-        
+
         calendar.select_day(GLib.DateTime.new_now_local())
         updateNotifications()
 
@@ -126,14 +171,14 @@ export default function Clock() {
         popover.remove_css_class("edge-top")
         popover.remove_css_class("edge-left")
         popover.remove_css_class("edge-right")
-        
+
         const coords = getWidgetExactCoords(menuButton)
         const rect = new Gdk.Rectangle({ x: 0, y: 0, width: menuButton.get_width(), height: menuButton.get_height() })
-        
+
         if (coords.y <= 45) { popover.add_css_class("edge-top"); rect.y = 30 - coords.y; rect.height = 1 }
         if (coords.x <= 45) { popover.add_css_class("edge-left"); rect.x = 30 - coords.x; rect.width = 1 }
         if (coords.x >= 1500) popover.add_css_class("edge-right")
-        
+
         popover.set_pointing_to(rect)
     })
 

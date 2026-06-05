@@ -65,7 +65,7 @@ window.SideBar {
   .shortcut-btn.running {
     color: rgba($accent0, 0.55);
 
-    border-left-color: rgba($primary-muted, 0.4);
+    border-left-color: rgba($primary-muted, 0.7);
 
     &:hover {
       color: $accent0;
@@ -94,6 +94,23 @@ window.SideBar {
         min-height: 1px;
         border-radius: 2px;
       }
+    }
+  }
+
+  .media-placeholder-btn {
+    all: unset;
+    color: rgba($subtext0, 0.5);
+    padding: 6px 2px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $primary-alt;
+      text-shadow: 0 0 8px rgba($primary-alt, 0.4);
+    }
+
+    image {
+      font-size: 12px;
     }
   }
 

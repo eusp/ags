@@ -34,7 +34,7 @@ export default function TopBar(gdkmonitor: Gdk.Monitor) {
         </box>
 
         {/* CENTER — Clock */}
-        <box cssClasses={["bar-center"]} halign={Gtk.Align.CENTER}>
+        <box cssClasses={["bar-center"]} halign={Gtk.Align.CENTER} hexpand>
           <Clock />
         </box>
 

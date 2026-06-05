@@ -1,5 +1,6 @@
 import { Gtk } from "ags/gtk4"
 import Mpris from "gi://AstalMpris"
+import Gio from "gi://Gio?version=2.0"
 
 const mpris = Mpris.get_default()
 
@@ -14,9 +15,6 @@ export function MediaControls() {
 
     let currentPlayer: any = null;
 
-    // Keep track of signal handlers to disconnect them
-    // Map<Player, Map<SignalName, HandlerID>>
-    // Actually, we only track the ONE active player.
     const signals = new Map<string, number>();
 
     const update = () => {
@@ -45,10 +43,29 @@ export function MediaControls() {
         }
 
         if (!player) {
-            container.visible = false
+            container.visible = true
+            container.opacity = 0.3
+
+            const placeholder = new Gtk.Button({ cssClasses: ["media-placeholder-btn"] })
+            placeholder.set_child(new Gtk.Image({ iconName: "media-playback-start-symbolic" }))
+            placeholder.connect("clicked", () => {
+                try {
+                    new Gio.Subprocess({
+                        argv: ["flatpak", "run", "com.spotify.Client"],
+                        flags: Gio.SubprocessFlags.NONE,
+                    }).init(null)
+                } catch {
+                    new Gio.Subprocess({
+                        argv: ["spotify"],
+                        flags: Gio.SubprocessFlags.NONE,
+                    }).init(null)
+                }
+            })
+            container.append(placeholder)
             return
         }
 
+        container.opacity = 1.0
         container.visible = true
 
         // Título de canción
@@ -58,7 +75,7 @@ export function MediaControls() {
             valign: Gtk.Align.CENTER,
             hexpand: true,
             ellipsize: 3,
-            maxWidthChars:15,
+            maxWidthChars: 15,
         })
         titleLabel.add_css_class("media-title")
         titleLabel.set_size_request(-1, 200) // Mover el size_request aquí
