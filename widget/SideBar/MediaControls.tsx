@@ -18,14 +18,11 @@ export function MediaControls() {
     const signals = new Map<string, number>();
 
     const update = () => {
-        // Clear UI
         while (container.get_first_child()) container.remove(container.get_first_child()!)
 
-        const player = mpris.players[0] // Just get the first available player
+        const player = mpris.players[0]
 
-        // If player changed, manage signals
         if (player !== currentPlayer) {
-            // Disconnect from old player
             if (currentPlayer) {
                 if (signals.has("playback-status")) currentPlayer.disconnect(signals.get("playback-status")!)
                 if (signals.has("title")) currentPlayer.disconnect(signals.get("title")!)
@@ -34,9 +31,7 @@ export function MediaControls() {
             currentPlayer = player
             signals.clear()
 
-            // Connect to new player if exists
             if (currentPlayer) {
-                // Ensure we update when this specific player changes state
                 signals.set("playback-status", currentPlayer.connect("notify::playback-status", update))
                 signals.set("title", currentPlayer.connect("notify::title", update))
             }
@@ -78,8 +73,8 @@ export function MediaControls() {
             maxWidthChars: 15,
         })
         titleLabel.add_css_class("media-title")
-        titleLabel.set_size_request(-1, 200) // Mover el size_request aquí
-        container.append(titleLabel) // Directamente al container
+        titleLabel.set_size_request(-1, 150)
+        container.append(titleLabel)
 
         // Controles
         const controls = new Gtk.Box({
@@ -110,10 +105,8 @@ export function MediaControls() {
         container.append(controls)
     }
 
-    // Connect to global Mpris notifications to detect player list changes
     mpris.connect("notify::players", update)
 
-    // Initial call
     update()
 
     return container
