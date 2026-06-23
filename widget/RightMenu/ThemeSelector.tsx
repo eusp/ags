@@ -150,37 +150,9 @@ function hotReload(data: ThemeColors) {
     activeThemeProvider = provider
 }
 
-function readWallpaperPaths(): { mp4: string | null; png: string | null } {
-    try {
-        const conf = `${GLib.get_home_dir()}/.config/hypr/conf/colors.conf`
-        const [ok, bytes] = GLib.file_get_contents(conf)
-        if (!ok) return { mp4: null, png: null }
-        const text = (new (globalThis as any).TextDecoder()).decode(bytes)
-        const mp4Match = text.match(/\$backgroundmp4\s*=\s*(.+)/)
-        const pngMatch = text.match(/\$background\s*=\s*(.+)/)
-        return {
-            mp4: mp4Match?.[1]?.trim() ?? null,
-            png: pngMatch?.[1]?.trim() ?? null,
-        }
-    } catch {
-        return { mp4: null, png: null }
-    }
-}
-
 function reloadWallpaper() {
-    const { mp4, png } = readWallpaperPaths()
-
-    if (mp4 && GLib.file_test(mp4, GLib.FileTest.EXISTS)) {
-        execAsync([
-            "bash", "-c",
-            `pkill -x mpvpaper || true; sleep 0.4; nohup mpvpaper -o 'no-audio loop --panscan=0.65 --video-align-y=1' '*' '${mp4}' &>/dev/null &`
-        ]).catch(() => { })
-    } else if (png && GLib.file_test(png, GLib.FileTest.EXISTS)) {
-        execAsync([
-            "bash", "-c",
-            `pkill -x mpvpaper || true; hyprctl hyprpaper preload '${png}' && hyprctl hyprpaper wallpaper ',${png}'`
-        ]).catch(() => { })
-    }
+    const script = `${GLib.get_home_dir()}/.config/hypr/scripts/change-wallpaper.sh`
+    execAsync(["bash", script]).catch(() => { })
 }
 
 function applyTheme(slug: string, data: ThemeColors) {
@@ -191,9 +163,10 @@ function applyTheme(slug: string, data: ThemeColors) {
     GLib.file_set_contents(`${SHIRO_DIR}/current-theme`, slug)
     execAsync(`node ${SHIRO_DIR}/build.js`)
         .then(() => {
-            // Reload Hyprland config so border colors update immediately
             execAsync(["hyprctl", "reload"]).catch(() => { })
             reloadWallpaper()
+            // Apply GRUB theme with sudo (requires sudoers rule — see README)
+            execAsync(["sudo", "-n", "node", `${SHIRO_DIR}/build-grub.js`]).catch(() => { })
         })
         .catch(() => { })
         .finally(() => isApplying.set(false))
