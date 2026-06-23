@@ -73,7 +73,7 @@ export function MediaControls() {
             valign: Gtk.Align.CENTER,
             hexpand: true,
             ellipsize: 3,
-            maxWidthChars: 15,
+            maxWidthChars: 14,
         })
         titleLabel.add_css_class("media-title")
         titleLabel.set_size_request(-1, 160)

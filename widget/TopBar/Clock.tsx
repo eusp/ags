@@ -166,6 +166,12 @@ export default function Clock() {
 
         calendar.select_day(GLib.DateTime.new_now_local())
         updateNotifications()
+        
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
+            calendar.grab_focus()
+            return GLib.SOURCE_REMOVE
+        })
+        calendar.grab_focus()
 
         // Edge detection
         popover.remove_css_class("edge-top")

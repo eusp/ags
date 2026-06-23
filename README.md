@@ -22,16 +22,18 @@ Una configuración de AGS (Aylur's GTK Shell) v2 altamente personalizada, minima
     - Configuración rápida (Mute, Bluetooth, WiFi).
     - Centro de notificaciones.
     - Buscador de aplicaciones y **panel de aplicaciones ancladas** con funcionamiento reactivo.
+    - **Selector de temas integrado** con previsualización del wallpaper: cambia el tema de todo el escritorio en caliente (colores AGS, bordes Hyprland y fondo de pantalla) sin reiniciar nada.
     - Menú de apagado.
 
 ## 🎨 Sistema de Diseño
 
-- **Paleta de Colores**: Catppuccin (Mauve/Peach) — variables SCSS en `styles/colors.scss`.
+- **Paleta de Colores**: Definida por [shiro-theme](https://github.com/emerson/.config/shiro-theme) — variables CSS nativas en `styles/colors.scss`.  
+  Los estilos usan `var(--primary)`, `var(--base)`, etc. en lugar de variables Sass, lo que permite **hot-reload de colores en runtime** sin recompilar ni reiniciar AGS.
+- **Hot-reload de tema**: Al seleccionar un tema en el widget, se inyecta un `Gtk.CssProvider` con prioridad 900 (mayor que la prioridad de carga de AGS) que sobreescribe todas las variables de color al instante.
 - **Popovers Unificados**: Todos los menús flotantes comparten el mismo estilo:
-    - Borde azul sutil `1px solid rgba($blue, 0.6)` en los lados y abajo (sin borde superior).
-    - Bordes redondeados solo en la parte inferior `0 0 16px 16px`.
-    - Sombra inferior `box-shadow: 0 8px 24px $base`.
-    - Fondo semitransparente oscuro.
+    - Borde sutil en los lados y abajo (sin borde superior).
+    - Bordes redondeados solo en la parte inferior.
+    - Sombra inferior y fondo semitransparente oscuro.
 
 ## 🛠️ Tecnologías
 
@@ -60,6 +62,8 @@ Una configuración de AGS (Aylur's GTK Shell) v2 altamente personalizada, minima
         - `Clock.tsx`: Reloj + popover de calendario, reloj digital y notificaciones.
     - `SideBar/`, `RightMenu/`: Widgets específicos de cada sección.
 - `styles/`: Archivos SCSS organizados por componentes.
+    - `colors.scss`: Variables CSS del tema activo (auto-generado por shiro-theme, no editar).
     - `popovers.scss`: Sistema global de estilos para todos los popovers/menús.
     - `topbar.scss`: Estilos de la barra superior y popover de fecha/hora.
-- `app.ts`: Definición de las ventanas y configuración principal.
+- `app.ts`: Definición de las ventanas, configuración principal e inyección inicial de variables CSS del tema.
+- `widget/RightMenu/ThemeSelector.tsx`: Selector de temas con hot-reload — carga temas desde `~/.config/shiro-theme/themes/`, previsualiza el wallpaper y aplica colores + fondo en caliente.

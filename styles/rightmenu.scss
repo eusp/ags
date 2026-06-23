@@ -1,5 +1,3 @@
-@use '../styles/colors' as *;
-
 // ═══════════════════════════════════════════════
 // RIGHT MENU
 // ═══════════════════════════════════════════════
@@ -8,16 +6,16 @@ window.RightMenu {
   background: transparent;
 
   .rightmenu-container {
-    background-color: rgba($base, 0.98);
+    background-color: rgba(var(--base-rgb), 0.98);
 
-    border-left: 2px solid $primary-muted;
+    border-left: 2px solid var(--primary-muted);
 
     padding: 12px;
     min-width: 320px;
 
     box-shadow:
-      inset 1px 0 0 rgba($accent0, 0.05),
-      0 0 24px rgba($primary, 0.08);
+      inset 1px 0 0 rgba(var(--accent0-rgb), 0.05),
+      0 0 24px rgba(var(--primary-rgb), 0.08);
   }
 
   // ═══════════════════════════════════════════════
@@ -31,12 +29,12 @@ window.RightMenu {
       font-size: 48px;
       font-weight: 800;
 
-      color: $accent0;
+      color: var(--accent0);
 
       font-family: "JetBrains Mono", monospace;
 
       text-shadow:
-        0 0 10px rgba($primary-alt, 0.15);
+        0 0 10px rgba(var(--primary-alt-rgb), 0.15);
     }
 
     .clock-date {
@@ -44,7 +42,7 @@ window.RightMenu {
 
       font-size: 14px;
 
-      color: rgba($subtext0, 0.8);
+      color: rgba(var(--subtext0-rgb), 0.8);
     }
 
     .clock-weather {
@@ -53,7 +51,7 @@ window.RightMenu {
 
       font-size: 13px;
 
-      color: $primary;
+      color: var(--primary);
     }
   }
 
@@ -81,16 +79,16 @@ window.RightMenu {
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba($overlay0, 0.8);
+      background: rgba(var(--overlay0-rgb), 0.8);
 
       box-shadow:
-        inset 0 0 0 1px rgba($primary, 0.1);
+        inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
     }
 
     .toggle-icon {
       font-size: 18px;
 
-      color: $accent0;
+      color: var(--accent0);
 
       min-width: 24px;
     }
@@ -98,7 +96,7 @@ window.RightMenu {
     .toggle-detail {
       font-size: 13px;
 
-      color: rgba($subtext0, 0.9);
+      color: rgba(var(--subtext0-rgb), 0.9);
     }
 
     .toggle-slider {
@@ -107,13 +105,13 @@ window.RightMenu {
       trough {
         min-height: 4px;
 
-        background: rgba($surface2, 0.8);
+        background: rgba(var(--surface2-rgb), 0.8);
 
         border-radius: 100px;
       }
 
       highlight {
-        background: rgba($primary, 0.7);
+        background: rgba(var(--primary-rgb), 0.7);
 
         border-radius: 100px;
       }
@@ -124,12 +122,12 @@ window.RightMenu {
 
         margin: -2px;
 
-        background: $primary-alt;
+        background: var(--primary-alt);
 
         border-radius: 100px;
 
         box-shadow:
-          0 0 6px rgba($primary-alt, 0.35);
+          0 0 6px rgba(var(--primary-alt-rgb), 0.35);
       }
     }
 
@@ -146,7 +144,7 @@ window.RightMenu {
       transition: all 0.2s ease;
 
       &:hover {
-        color: $accent0;
+        color: var(--accent0);
       }
     }
 
@@ -157,7 +155,7 @@ window.RightMenu {
     .toggle-arrow {
       font-size: 10px;
 
-      color: rgba($subtext0, 0.45);
+      color: rgba(var(--subtext0-rgb), 0.45);
     }
   }
 
@@ -176,29 +174,29 @@ window.RightMenu {
   // ═══════════════════════════════════════════════
 
   .notification-panel {
-    background: rgba($surface0, 0.5);
+    background: rgba(var(--surface0-rgb), 0.5);
 
     border-radius: 12px;
 
     padding: 10px;
 
-    border: 1px solid rgba($primary, 0.08);
+    border: 1px solid rgba(var(--primary-rgb), 0.08);
   }
 
   .clear-button {
-    color: $accent0;
+    color: var(--accent0);
 
-    background: rgba($surface1, 0.45);
+    background: rgba(var(--surface1-rgb), 0.45);
 
     &:hover {
-      background: rgba($overlay0, 0.9);
+      background: rgba(var(--overlay0-rgb), 0.9);
 
-      color: $text;
+      color: var(--text);
     }
   }
 
   .empty-state {
-    color: rgba($subtext0, 0.65);
+    color: rgba(var(--subtext0-rgb), 0.65);
 
     font-size: 11px;
   }
@@ -208,8 +206,8 @@ window.RightMenu {
   // ═══════════════════════════════════════════════
 
   .apps-panel {
-    border-top: 1px solid rgba($primary-muted, 0.5);
-    border-bottom: 1px solid rgba($primary-muted, 0.5);
+    border-top: 1px solid rgba(var(--primary-muted-rgb), 0.5);
+    border-bottom: 1px solid rgba(var(--primary-muted-rgb), 0.5);
 
     border-radius: 12px;
 
@@ -234,12 +232,12 @@ window.RightMenu {
 
     border-radius: 10px;
 
-    color: $accent0;
+    color: var(--accent0);
 
-    border-bottom: 1px solid rgba($primary-muted, 0.5);
+    border-bottom: 1px solid rgba(var(--primary-muted-rgb), 0.5);
 
     &:focus-within {
-      background: rgba($overlay0, 0.8);
+      background: rgba(var(--overlay0-rgb), 0.8);
     }
   }
 
@@ -248,15 +246,15 @@ window.RightMenu {
   }
 
   .menu-button {
-    border-bottom: 1px solid rgba($primary-muted, 0.5);
+    border-bottom: 1px solid rgba(var(--primary-muted-rgb), 0.5);
 
     padding-left: 10px;
     padding-right: 10px;
 
-    color: $accent0;
+    color: var(--accent0);
 
     &:hover {
-      background: rgba($overlay0, 0.8);
+      background: rgba(var(--overlay0-rgb), 0.8);
     }
 
     image {
@@ -276,7 +274,7 @@ window.RightMenu {
     border-radius: 8px;
 
     image {
-      color: $accent0;
+      color: var(--accent0);
 
       font-size: 40px;
     }
@@ -284,7 +282,7 @@ window.RightMenu {
     .app-tile-name {
       font-size: 12px;
 
-      color: rgba($subtext0, 0.9);
+      color: rgba(var(--subtext0-rgb), 0.9);
     }
 
     &.pinned-tile {
@@ -294,21 +292,21 @@ window.RightMenu {
     }
 
     &:hover {
-      background: rgba($overlay0, 0.8);
+      background: rgba(var(--overlay0-rgb), 0.8);
     }
 
     &.highlighted {
-      background: rgba($primary, 0.15);
+      background: rgba(var(--primary-rgb), 0.15);
 
       box-shadow:
-        inset 0 0 0 1px rgba($primary-alt, 0.2),
-        0 0 12px rgba($primary, 0.08);
+        inset 0 0 0 1px rgba(var(--primary-alt-rgb), 0.2),
+        0 0 12px rgba(var(--primary-rgb), 0.08);
     }
   }
 
   .no-results-label {
     min-height: 225px;
-    color: rgba($subtext0, 0.65);
+    color: rgba(var(--subtext0-rgb), 0.65);
 
     font-size: 11px;
   }
@@ -329,7 +327,7 @@ window.RightMenu {
   .power-button {
     background: transparent;
 
-    color: rgba($subtext0, 0.8);
+    color: rgba(var(--subtext0-rgb), 0.8);
 
     padding: 10px;
 
@@ -338,14 +336,14 @@ window.RightMenu {
     border: 1px solid transparent;
 
     &:hover {
-      color: $accent0;
+      color: var(--accent0);
 
-      background: rgba($overlay0, 0.8);
+      background: rgba(var(--overlay0-rgb), 0.8);
 
-      border: 1px solid rgba($primary, 0.15);
+      border: 1px solid rgba(var(--primary-rgb), 0.15);
 
       box-shadow:
-        0 0 12px rgba($primary, 0.08);
+        0 0 12px rgba(var(--primary-rgb), 0.08);
     }
 
     image {
@@ -377,4 +375,149 @@ window.RightMenu {
     outline-color: transparent;
   }
 
+  // ═══════════════════════════════════════════════
+  // THEME SELECTOR
+  // ═══════════════════════════════════════════════
+
+  // Panel contenedor completo (botón + cards)
+  .theme-selector {
+    border-top: 1px solid rgba(var(--primary-muted-rgb), 0.5);
+    border-bottom: 1px solid rgba(var(--primary-muted-rgb), 0.5);
+    border-radius: 10px;
+  }
+
+  .theme-selector-toggle {
+    all: unset;
+    padding: 5px 20px 5px 0px;
+    border-radius: 8px;
+    color: rgba(var(--subtext0-rgb), 0.8);
+    transition: all 0.2s ease;
+
+    .theme-toggle-label {
+      font-size: 12px;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+    }
+
+    .theme-toggle-current {
+      font-size: 11px;
+      font-family: "JetBrainsMono Nerd Font", monospace;
+      color: var(--primary);
+    }
+
+    .theme-toggle-arrow {
+      font-size: 11px;
+      color: rgba(var(--subtext0-rgb), 0.4);
+    }
+
+    &:hover {
+      color: var(--accent0);
+      background: rgba(var(--overlay0-rgb), 0.7);
+    }
+
+    // Estado activo/abierto: highlight del botón completo
+    &.expanded {
+      color: var(--accent0);
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom: 1px solid rgba(var(--primary-muted-rgb), 0.2);
+
+      .theme-toggle-label {
+        color: var(--accent0);
+      }
+
+      .theme-toggle-arrow {
+        color: var(--primary);
+      }
+    }
+  }
+
+  .theme-cards-scroll {
+    scrollbar {
+      background: transparent;
+
+      slider {
+        background: rgba(var(--primary-muted-rgb), 0.35);
+        border-radius: 3px;
+        min-width: 3px;
+
+        &:hover {
+          background: rgba(var(--primary-rgb), 0.5);
+        }
+      }
+    }
+  }
+
+  .theme-cards-container {
+    padding: 0 4px;
+  }
+
+  .theme-card {
+    all: unset;
+    border-radius: 8px;
+    border: 1px solid rgba(var(--primary-muted-rgb), 0.5);
+    background: rgba(var(--surface0-rgb), 0.5);
+    transition: all 0.2s ease;
+    margin-bottom: 5px;
+
+    &:hover {
+      border-color: rgba(var(--primary-rgb), 0.35);
+      background: rgba(var(--surface1-rgb), 0.6);
+      box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.07);
+    }
+
+    &.active-theme {
+      border-color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.06);
+      box-shadow:
+        0 0 14px rgba(var(--primary-rgb), 0.1),
+        inset 0 0 0 1px rgba(var(--primary-alt-rgb), 0.08);
+    }
+  }
+
+  .theme-card-wallpaper {
+    min-height: 150px;
+    border-radius: 6px;
+  }
+
+  .theme-card-no-wallpaper {
+    min-height: 150px;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .theme-card-info {
+    padding: 16px 8px 5px;
+    border-radius: 0 0 6px 6px;
+  }
+
+  .theme-card-name {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    color: var(--accent0);
+
+    text-shadow:
+        1px 0 #000,
+       -1px 0 #000,
+        0 1px #000,
+        0 -1px #000;
+  }
+
+  .theme-card-active-badge {
+    font-size: 10px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    color: var(--primary);
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(var(--base-rgb), 0.7);
+    border: 1px solid rgba(var(--primary-rgb), 0.4);
+  }
+
+  .applying-indicator {
+    font-size: 11px;
+    font-family: "Inter", sans-serif;
+    color: rgba(var(--primary-rgb), 0.8);
+    padding: 4px 10px;
+  }
 }

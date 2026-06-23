@@ -1,5 +1,3 @@
-@use '../styles/colors' as *;
-
 popover.shared-popover,
 popover.clock-popover {
   background-color: transparent;
@@ -10,15 +8,15 @@ popover.clock-popover {
   }
 
   contents {
-    background-color: rgba($base, 0.98);
+    background-color: rgba(var(--base-rgb), 0.98);
 
-    border: 1px solid rgba($primary, 0.25);
+    border: 1px solid rgba(var(--primary-rgb), 0.25);
 
     border-radius: 10px;
 
     box-shadow:
-      0 0 24px rgba($primary, 0.08),
-      inset 0 1px 0 rgba($accent0, 0.04);
+      0 0 24px rgba(var(--primary-rgb), 0.08),
+      inset 0 1px 0 rgba(var(--accent0-rgb), 0.04);
   }
 
   &.edge-top contents {
@@ -41,11 +39,11 @@ popover.clock-popover {
   // ═══════════════════════════════════════════════
 
   .clock-popover-content {
-    background-color: rgba($base, 0.5);
+    background-color: rgba(var(--base-rgb), 0.5);
   }
 
   .popover-vertical-separator {
-    background-color: rgba($primary-muted, 0.25);
+    background-color: rgba(var(--primary-muted-rgb), 0.25);
 
     min-width: 1px;
 
@@ -54,22 +52,40 @@ popover.clock-popover {
 
   calendar.popover-calendar {
     border: none;
-
     background: transparent;
-
-    color: rgba($subtext0, 0.85);
-
+    color: rgba(var(--subtext0-rgb), 0.85);
     padding: 4px;
 
-    &:selected {
-      background-color: $primary;
-
-      color: $text;
-
+    label.day-number.today {
+      background-color: transparent;
+      box-shadow: none;
       border-radius: 6px;
+      color: var(--primary-alt);
+      border-top: 1px solid var(--primary-muted);
+      border-bottom: 1px solid var(--primary-muted);
 
-      box-shadow:
-        0 0 8px rgba($primary-alt, 0.25);
+      label.day-number.today:focus {
+        background-color: rgba(var(--primary-rgb), 0.12);
+        box-shadow: inset 0 0 0 1px rgba(var(--primary-rgb), 0.45);
+        border-radius: 6px;
+        border-bottom: none;
+        color: var(--primary-alt);
+      }
+    }
+
+    label.day-number:focus {
+      outline: none;
+      background-color: rgba(var(--primary-rgb), 0.12);
+      box-shadow: inset 0 0 0 1px rgba(var(--primary-rgb), 0.45);
+      border-radius: 6px;
+      color: var(--primary-alt);
+    }
+
+    label.day-number:hover {
+      background-color: rgba(var(--primary-rgb), 0.25);
+      border-radius: 6px;
+      color: var(--primary-alt);
+      box-shadow: inset 0 0 0 1px rgba(var(--primary-rgb), 0.3);
     }
   }
 
@@ -86,12 +102,12 @@ popover.clock-popover {
 
         font-weight: 800;
 
-        color: $accent0;
+        color: var(--accent0);
 
         letter-spacing: 1px;
 
         text-shadow:
-          0 0 10px rgba($primary-alt, 0.15);
+          0 0 10px rgba(var(--primary-alt-rgb), 0.15);
       }
 
       .popover-digital-date {
@@ -101,7 +117,7 @@ popover.clock-popover {
 
         font-weight: 500;
 
-        color: rgba($subtext0, 0.8);
+        color: rgba(var(--subtext0-rgb), 0.8);
 
         margin-top: 4px;
       }
@@ -118,7 +134,7 @@ popover.clock-popover {
 
           font-weight: 700;
 
-          color: $accent0;
+          color: var(--accent0);
         }
 
         .popover-notifs-clear {
@@ -130,18 +146,18 @@ popover.clock-popover {
 
           font-weight: 600;
 
-          color: rgba($subtext0, 0.75);
+          color: rgba(var(--subtext0-rgb), 0.75);
 
           padding: 4px 8px;
 
           border-radius: 6px;
 
-          background: rgba($surface1, 0.45);
+          background: rgba(var(--surface1-rgb), 0.45);
 
           &:hover {
-            color: $danger;
+            color: var(--danger);
 
-            background: rgba($danger, 0.15);
+            background: rgba(var(--danger-rgb), 0.15);
           }
         }
       }
@@ -149,11 +165,11 @@ popover.clock-popover {
       .popover-notifs-scrolled {
         border-radius: 8px;
 
-        background: rgba($surface0, 0.55);
+        background: rgba(var(--surface0-rgb), 0.55);
 
         padding: 4px;
 
-        border: 1px solid rgba($primary, 0.06);
+        border: 1px solid rgba(var(--primary-rgb), 0.06);
       }
 
       .popover-notif-empty {
@@ -161,13 +177,13 @@ popover.clock-popover {
 
         font-size: 13px;
 
-        color: rgba($subtext0, 0.7);
+        color: rgba(var(--subtext0-rgb), 0.7);
 
         padding: 24px;
       }
 
       .popover-notif-item {
-        background: rgba($surface1, 0.45);
+        background: rgba(var(--surface1-rgb), 0.45);
 
         border-radius: 8px;
 
@@ -182,16 +198,16 @@ popover.clock-popover {
         }
 
         &:hover {
-          background: rgba($overlay0, 0.9);
+          background: rgba(var(--overlay0-rgb), 0.9);
 
           box-shadow:
-            inset 0 0 0 1px rgba($primary, 0.08);
+            inset 0 0 0 1px rgba(var(--primary-rgb), 0.08);
         }
 
         image {
           font-size: 20px;
 
-          color: $primary;
+          color: var(--primary);
         }
 
         .popover-notif-summary {
@@ -201,7 +217,7 @@ popover.clock-popover {
 
           font-weight: 600;
 
-          color: rgba($accent0, 0.95);
+          color: rgba(var(--accent0-rgb), 0.95);
         }
 
         .popover-notif-body {
@@ -209,22 +225,22 @@ popover.clock-popover {
 
           font-size: 11.5px;
 
-          color: rgba($subtext0, 0.85);
+          color: rgba(var(--subtext0-rgb), 0.85);
         }
 
         .popover-notif-dismiss {
           all: unset;
 
-          color: rgba($subtext0, 0.45);
+          color: rgba(var(--subtext0-rgb), 0.45);
 
           padding: 4px;
 
           border-radius: 4px;
 
           &:hover {
-            color: $danger;
+            color: var(--danger);
 
-            background: rgba($danger, 0.15);
+            background: rgba(var(--danger-rgb), 0.15);
           }
 
           image {
@@ -242,7 +258,7 @@ popover.clock-popover {
   // ═══════════════════════════════════════════════
 
   .popover-section-title {
-    color: $primary;
+    color: var(--primary);
 
     font-family: "Inter", sans-serif;
 
@@ -262,7 +278,7 @@ popover.clock-popover {
 
     border-radius: 8px;
 
-    color: rgba($subtext0, 0.9);
+    color: rgba(var(--subtext0-rgb), 0.9);
 
     border: 1px solid transparent;
 
@@ -271,7 +287,7 @@ popover.clock-popover {
     image {
       font-size: 13px;
 
-      color: $primary;
+      color: var(--primary);
     }
 
     label {
@@ -283,22 +299,22 @@ popover.clock-popover {
     }
 
     &:hover {
-      background-color: rgba($overlay0, 0.9);
+      background-color: rgba(var(--overlay0-rgb), 0.9);
 
-      color: $accent0;
+      color: var(--accent0);
 
-      border: 1px solid rgba($primary, 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.12);
     }
 
     &.dangerous:hover {
-      background-color: rgba($danger, 0.15);
+      background-color: rgba(var(--danger-rgb), 0.15);
 
-      color: $danger;
+      color: var(--danger);
     }
   }
 
   .popover-separator {
-    background-color: rgba($primary-muted, 0.25);
+    background-color: rgba(var(--primary-muted-rgb), 0.25);
 
     min-height: 1px;
 
@@ -319,23 +335,23 @@ popover.clock-popover {
 
       margin: -5px;
 
-      background: $primary-alt;
+      background: var(--primary-alt);
 
       border-radius: 50%;
 
       box-shadow:
-        0 0 8px rgba($primary-alt, 0.25);
+        0 0 8px rgba(var(--primary-alt-rgb), 0.25);
     }
 
     trough {
-      background-color: rgba($surface2, 0.8);
+      background-color: rgba(var(--surface2-rgb), 0.8);
 
       min-height: 6px;
 
       border-radius: 3px;
 
       highlight {
-        background-color: $primary;
+        background-color: var(--primary);
 
         border-radius: 3px;
       }
@@ -351,7 +367,7 @@ popover.clock-popover {
 
     border-radius: 6px;
 
-    color: rgba($subtext0, 0.9);
+    color: rgba(var(--subtext0-rgb), 0.9);
 
     font-size: 12px;
 
@@ -364,16 +380,16 @@ popover.clock-popover {
     transition: all 0.2s ease;
 
     &:hover {
-      background-color: rgba($overlay0, 0.9);
+      background-color: rgba(var(--overlay0-rgb), 0.9);
 
-      color: $accent0;
+      color: var(--accent0);
 
-      border: 1px solid rgba($primary, 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.12);
     }
   }
 
   separator {
-    background-color: rgba($primary-muted, 0.25);
+    background-color: rgba(var(--primary-muted-rgb), 0.25);
 
     min-height: 1px;
 
@@ -389,3 +405,4 @@ popover.clock-popover {
     border-top-right-radius: 0;
   }
 }
+

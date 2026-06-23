@@ -1,36 +1,59 @@
-// AUTO GENERATED
+/* AUTO GENERATED — do not edit manually */
 
-// Base
-$base: #040509;
-$text: #e8ecff;
-$subtext0: #9ba6d9;
+* {
+  /* Base */
+  --base: #040509;
+  --base-rgb: 4, 5, 9;
+  --text: #e8ecff;
+  --text-rgb: 232, 236, 255;
+  --subtext0: #9ba6d9;
+  --subtext0-rgb: 155, 166, 217;
 
-// Surfaces
-$surface0: #0c1020;
-$surface1: #141b33;
-$surface2: #1f2950;
+  /* Surfaces */
+  --surface0: #0c1020;
+  --surface0-rgb: 12, 16, 32;
+  --surface1: #141b33;
+  --surface1-rgb: 20, 27, 51;
+  --surface2: #1f2950;
+  --surface2-rgb: 31, 41, 80;
 
-// Overlays
-$overlay0: #24315f;
-$overlay1: #35488a;
+  /* Overlays */
+  --overlay0: #24315f;
+  --overlay0-rgb: 36, 49, 95;
+  --overlay1: #35488a;
+  --overlay1-rgb: 53, 72, 138;
 
-// Primary
-$primary: #6d7cff;
-$primary-alt: #9ca7ff;
-$primary-muted: #4a569a;
+  /* Primary */
+  --primary: #6d7cff;
+  --primary-rgb: 109, 124, 255;
+  --primary-alt: #9ca7ff;
+  --primary-alt-rgb: 156, 167, 255;
+  --primary-muted: #4a569a;
+  --primary-muted-rgb: 74, 86, 154;
 
-// Semantic
-$danger: #a33456;
-$warning: #d3c17d;
-$success: #65a6b3;
-$info: #8ea7ff;
+  /* Semantic */
+  --danger: #a33456;
+  --danger-rgb: 163, 52, 86;
+  --warning: #d3c17d;
+  --warning-rgb: 211, 193, 125;
+  --success: #65a6b3;
+  --success-rgb: 101, 166, 179;
+  --info: #8ea7ff;
+  --info-rgb: 142, 167, 255;
 
-// Accents
-$accent0: #d7deff;
-$accent1: #a9b8ff;
-$accent2: #7b88ff;
-$accent3: #eef1ff;
+  /* Accents */
+  --accent0: #d7deff;
+  --accent0-rgb: 215, 222, 255;
+  --accent1: #a9b8ff;
+  --accent1-rgb: 169, 184, 255;
+  --accent2: #7b88ff;
+  --accent2-rgb: 123, 136, 255;
+  --accent3: #eef1ff;
+  --accent3-rgb: 238, 241, 255;
 
-// Layers
-$mantle: #070910;
-$crust: #020307;
+  /* Layers */
+  --mantle: #070910;
+  --mantle-rgb: 7, 9, 16;
+  --crust: #020307;
+  --crust-rgb: 2, 3, 7;
+}
